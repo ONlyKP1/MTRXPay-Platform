@@ -2,8 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { KYCProvider } from './context/KYCContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { PasswordGate } from './components/PasswordGate';
 import { LandingPage } from './pages/LandingPage';
+import { AboutPage } from './pages/AboutPage';
+import { PricingPage } from './pages/PricingPage';
+import { ContactPage } from './pages/ContactPage';
+import { PublicLayout } from './components/layout/PublicLayout';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
@@ -66,8 +69,11 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Landing Page */}
+      {/* Public Pages */}
       <Route path="/" element={<LandingPage />} />
+      <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+      <Route path="/pricing" element={<PublicLayout><PricingPage /></PublicLayout>} />
+      <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/test" element={<MtrxWelcomePage />} />
 
       {/* Auth Routes - redirect to dashboard if logged in */}
@@ -203,15 +209,13 @@ function AppRoutes() {
 function App() {
   return (
     <ThemeProvider>
-      <PasswordGate>
-        <BrowserRouter>
-          <AuthProvider>
-            <KYCProvider>
-              <AppRoutes />
-            </KYCProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </PasswordGate>
+      <BrowserRouter>
+        <AuthProvider>
+          <KYCProvider>
+            <AppRoutes />
+          </KYCProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
