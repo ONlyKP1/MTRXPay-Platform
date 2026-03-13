@@ -10,7 +10,7 @@ export function Footer() {
         <AnimatedSection className="hp-cta__inner" animation="fade-up">
           <span className="hp-section-label">Get Started</span>
           <h2>Ready to accept payments<br /><em>without limits?</em></h2>
-          <p>Create your account in minutes. No lengthy applications, no category restrictions — just compliant payment infrastructure built for your business.</p>
+          <p>Create your account in minutes. No lengthy applications, no category restrictions. Just compliant payment infrastructure built for your business.</p>
           <div className="hp-cta__actions">
             <Link to="/register" className="hp-btn hp-btn--primary">
               Sign Up Now

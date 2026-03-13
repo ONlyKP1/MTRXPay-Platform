@@ -92,7 +92,7 @@ export function ContactPage() {
           <AnimatedSection className="hp-contact__info-card" animation="fade-up" delay={0.15}>
             <div className="hp-contact__info-block">
               <h3>Email</h3>
-              <a href="mailto:hello@mtrxpay.com">hello@mtrxpay.com</a>
+              <a href="mailto:info@mtrxpay.com">info@mtrxpay.com</a>
             </div>
             <div className="hp-contact__info-block">
               <h3>London Office</h3>
@@ -106,6 +106,15 @@ export function ContactPage() {
               <p>MIDAS TRANSACTION EXCHANGE FZCO</p>
               <p>IFZA Business Park, DDP</p>
               <p>Dubai, UAE</p>
+            </div>
+            <div className="hp-contact__info-block">
+              <h3>Working Hours</h3>
+              <p>Monday to Friday</p>
+              <p>9:00 AM to 6:00 PM (GMT)</p>
+            </div>
+            <div className="hp-contact__info-block">
+              <h3>For Merchants</h3>
+              <p>Already a merchant? Log in to your dashboard for direct support from your dedicated account manager.</p>
             </div>
           </AnimatedSection>
         </div>

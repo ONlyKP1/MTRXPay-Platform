@@ -92,7 +92,7 @@ export function PricingPage() {
             </svg>
             <div>
               <strong>Growth &amp; Enterprise tiers coming soon</strong>
-              <p>Volume-based pricing, faster settlement, and dedicated infrastructure — launching shortly.</p>
+              <p>Volume-based pricing, faster settlement, and dedicated infrastructure. Launching shortly.</p>
             </div>
           </div>
         </AnimatedSection>

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { AnimatedSection, StaggeredAnimation } from '../components/AnimatedSection';
 
 const values = [
@@ -10,7 +9,7 @@ const values = [
     ),
     title: 'Compliance First',
     description:
-      'Every transaction flows through our proprietary compliance engine. We don\'t cut corners — we build trust through rigorous regulatory adherence.',
+      'Every transaction flows through our proprietary compliance engine. We don\'t cut corners. We build trust through rigorous regulatory adherence.',
   },
   {
     icon: (
@@ -31,7 +30,7 @@ const values = [
     ),
     title: 'Specialist Expertise',
     description:
-      'We don\'t serve everyone — we serve underserved industries exceptionally. Deep vertical knowledge means better risk models and better outcomes.',
+      'We don\'t serve everyone. We serve underserved industries exceptionally. Deep vertical knowledge means better risk models and better outcomes.',
   },
 ];
 
@@ -81,6 +80,8 @@ export function AboutPage() {
         </AnimatedSection>
       </section>
 
+      <div className="hp-section-divider hp-section-divider--tight"><div className="hp-section-divider__line" /><div className="hp-section-divider__diamond" /><div className="hp-section-divider__line" /></div>
+
       {/* Founders */}
       <section className="hp-about__founders">
         <AnimatedSection animation="fade-up" style={{ textAlign: 'center', marginBottom: 64 }}>
@@ -93,7 +94,6 @@ export function AboutPage() {
         {/* Peter */}
         <AnimatedSection className="hp-about__founder" animation="fade-up">
           <div className="hp-about__founder-header">
-            <div className="hp-about__founder-avatar">PW</div>
             <div>
               <h3 className="hp-about__founder-name">Peter Watt</h3>
               <span className="hp-about__founder-role">Founder</span>
@@ -113,7 +113,6 @@ export function AboutPage() {
         {/* Keiran */}
         <AnimatedSection className="hp-about__founder" animation="fade-up">
           <div className="hp-about__founder-header">
-            <div className="hp-about__founder-avatar">KP</div>
             <div>
               <h3 className="hp-about__founder-name">Keiran Perkins</h3>
               <span className="hp-about__founder-role">Co-Founder</span>
@@ -131,7 +130,6 @@ export function AboutPage() {
         {/* Wayne */}
         <AnimatedSection className="hp-about__founder" animation="fade-up">
           <div className="hp-about__founder-header">
-            <div className="hp-about__founder-avatar">WD</div>
             <div>
               <h3 className="hp-about__founder-name">Wayne Daniel</h3>
               <span className="hp-about__founder-role">Co-Founder</span>
@@ -145,6 +143,8 @@ export function AboutPage() {
           </div>
         </AnimatedSection>
       </section>
+
+      <div className="hp-section-divider hp-section-divider--tight"><div className="hp-section-divider__line" /><div className="hp-section-divider__diamond" /><div className="hp-section-divider__line" /></div>
 
       {/* Values */}
       <section className="hp-about__values">
@@ -164,6 +164,8 @@ export function AboutPage() {
           ))}
         </StaggeredAnimation>
       </section>
+
+      <div className="hp-section-divider hp-section-divider--tight"><div className="hp-section-divider__line" /><div className="hp-section-divider__diamond" /><div className="hp-section-divider__line" /></div>
 
       {/* Entities */}
       <section className="hp-about__entities">
@@ -189,20 +191,6 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="hp-about__cta">
-        <AnimatedSection animation="fade-up" style={{ textAlign: 'center' }}>
-          <h2 className="hp-section-title">
-            Ready to <em>get started?</em>
-          </h2>
-          <p className="hp-section-subtitle" style={{ marginBottom: 32 }}>
-            Join the merchants who chose a payment partner that actually understands their business.
-          </p>
-          <Link to="/register" className="hp-btn hp-btn--primary">
-            Sign Up Now
-          </Link>
-        </AnimatedSection>
-      </section>
     </>
   );
 }

@@ -10960,12 +10960,12 @@ select.form-input {
   flex: 1; max-width: 280px; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(197,164,78,0.3), transparent);
 }
+.hp-section-divider--tight { padding: 0; }
 .hp-section-divider__diamond {
-  width: 10px; height: 10px; flex-shrink: 0;
+  width: 7px; height: 7px; flex-shrink: 0;
   background: var(--hp-gold);
   transform: rotate(45deg);
-  opacity: 0.5;
-  box-shadow: 0 0 16px rgba(197,164,78,0.3);
+  opacity: 0.35;
 }
 
 /* ============================================================
@@ -10994,8 +10994,7 @@ select.form-input {
 }
 
 .hp-about__mission {
-  padding: 100px 24px; background: #0a0e16;
-  border-top: 1px solid var(--hp-border); border-bottom: 1px solid var(--hp-border);
+  padding: 60px 24px; background: transparent;
 }
 .hp-about__quote {
   font-size: clamp(1.6rem, 3.2vw, 2.6rem); font-weight: 800;
@@ -11015,7 +11014,7 @@ select.form-input {
 }
 
 .hp-about__founders {
-  padding: 100px 24px; max-width: 900px; margin: 0 auto;
+  padding: 60px 24px; max-width: 900px; margin: 0 auto;
 }
 
 /* Founder card — premium glass morphism */
@@ -11109,7 +11108,7 @@ select.form-input {
 }
 
 .hp-about__values {
-  padding: 100px 24px; max-width: 1200px; margin: 0 auto;
+  padding: 60px 24px; max-width: 1200px; margin: 0 auto;
 }
 .hp-about__values-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
@@ -11129,7 +11128,7 @@ select.form-input {
 }
 
 .hp-about__entities {
-  padding: 100px 24px; max-width: 1200px; margin: 0 auto;
+  padding: 60px 24px; max-width: 1200px; margin: 0 auto;
 }
 .hp-about__entities-grid {
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
@@ -11311,6 +11310,10 @@ select.form-input {
   font-size: 0.9rem; line-height: 1.7; color: var(--hp-text-muted);
 }
 
+/* FAQ Page - reduced padding */
+.hp-faq-page .hp-pricing-page__header { padding: 100px 24px 24px; }
+.hp-faq-page .hp-pricing-page__faq { padding: 24px 24px 80px; }
+
 /* ============================================================
    CONTACT PAGE
    ============================================================ */
@@ -11321,11 +11324,12 @@ select.form-input {
   padding: 0 24px 100px; max-width: 1000px; margin: 0 auto;
 }
 .hp-contact__grid {
-  display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 32px; align-items: start;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: stretch;
 }
 .hp-contact__form-card {
   background: var(--hp-bg-raised); border: 1px solid var(--hp-border);
-  border-radius: var(--hp-radius); padding: 40px 32px;
+  border-radius: var(--hp-radius) var(--hp-radius) 0 0;
+  border-bottom: none; padding: 40px 32px;
 }
 .hp-contact__form-card h2 {
   font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 28px;
@@ -11352,7 +11356,8 @@ select.form-input {
 
 .hp-contact__info-card {
   background: var(--hp-bg-raised); border: 1px solid var(--hp-border);
-  border-radius: var(--hp-radius); padding: 40px 32px;
+  border-radius: var(--hp-radius) var(--hp-radius) 0 0;
+  border-bottom: none; padding: 40px 32px;
   display: flex; flex-direction: column; gap: 32px;
 }
 .hp-contact__info-block h3 {
@@ -11364,6 +11369,15 @@ select.form-input {
   font-size: 0.9rem; line-height: 1.7; color: var(--hp-text-muted); text-decoration: none;
 }
 .hp-contact__info-block a:hover { color: var(--hp-gold); }
+.hp-contact__response {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: auto; padding-top: 24px;
+  border-top: 1px solid var(--hp-border);
+}
+.hp-contact__response svg { color: var(--hp-gold); flex-shrink: 0; }
+.hp-contact__response p {
+  font-size: 0.82rem; line-height: 1.5; color: var(--hp-text-muted); margin: 0;
+}
 
 /* ============================================================
    CTA + FOOTER

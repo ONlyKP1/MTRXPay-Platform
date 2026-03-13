@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { AnimatedSection } from '../components/AnimatedSection';
 
 const faqs = [
   {
     q: 'How quickly will I receive my funds?',
-    a: 'Funds are settled T+1 — meaning you receive your money the next business day. All settlement schedules are transparent with no hidden holds.',
+    a: 'Funds are settled T+1, meaning you receive your money the next business day. All settlement schedules are transparent with no hidden holds.',
   },
   {
     q: 'How do you handle chargebacks?',
@@ -20,7 +21,7 @@ const faqs = [
   },
   {
     q: 'Are there any hidden fees?',
-    a: 'No. The rates shown are all-inclusive — there are no monthly minimums, no gateway fees, and no PCI compliance charges. What you see is what you pay.',
+    a: 'No. The rates shown are all-inclusive. There are no monthly minimums, no gateway fees, and no PCI compliance charges. What you see is what you pay.',
   },
   {
     q: 'What industries do you support?',
@@ -40,7 +41,7 @@ export function FAQPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <>
+    <div className="hp-faq-page">
       <section className="hp-pricing-page__header">
         <AnimatedSection animation="fade-up" style={{ textAlign: 'center' }}>
           <span className="hp-section-label">FAQ</span>
@@ -48,7 +49,7 @@ export function FAQPage() {
             Frequently Asked <em>Questions</em>
           </h1>
           <p className="hp-section-subtitle">
-            Everything you need to know about MTRX PAY. Can't find an answer? Get in touch.
+            Everything you need to know about MTRX PAY. Can't find an answer? <Link to="/contact" style={{ color: 'var(--hp-gold)' }}>Get in touch</Link>.
           </p>
         </AnimatedSection>
       </section>
@@ -86,6 +87,6 @@ export function FAQPage() {
           ))}
         </div>
       </section>
-    </>
+    </div>
   );
 }

@@ -39,7 +39,7 @@ export function Offers() {
           <h3>Risk-Aware by Design</h3>
           <p>
             Embedded KYB/KYC, transaction monitoring, and
-            dispute tooling — aligned with your risk profile.
+            dispute tooling, aligned with your risk profile.
           </p>
           <div className="offer-visual">
             <div className="merchant-list">
@@ -72,7 +72,7 @@ export function Offers() {
           <h3>Global, Without Fragmentation</h3>
           <p>
             Multi-currency support, and intelligent routing across
-            regions — without managing multiple integrations.
+            regions, without managing multiple integrations.
           </p>
           <div className="offer-visual">
             <div className="world-map">
