@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../context/AuthContext';
 import { Button, Input, Select, ProgressSteps, Alert } from '../components/common';
-import { SumsubVerification } from '../components/SumsubWebSdk';
+// import { SumsubVerification } from '../components/SumsubWebSdk';
 import { COUNTRIES } from '../types/kyc';
 
 const STEPS = [
@@ -32,7 +32,7 @@ type AddressForm = z.infer<typeof addressSchema>;
 
 export function KYCIndividualPage() {
   const navigate = useNavigate();
-  const { user, updateKYCStatus } = useAuth();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [verificationStarted, setVerificationStarted] = useState(false);
 
@@ -58,15 +58,6 @@ export function KYCIndividualPage() {
     setVerificationStarted(true);
   };
 
-  const handleVerificationComplete = (status: 'approved' | 'rejected' | 'pending') => {
-    updateKYCStatus(status);
-    navigate('/dashboard');
-  };
-
-  const handleVerificationError = (error: Error) => {
-    console.error('Verification error:', error);
-    setVerificationStarted(false);
-  };
 
   return (
     <div className="kyc-layout">
@@ -232,12 +223,9 @@ export function KYCIndividualPage() {
               </>
             ) : (
               <div className="sumsub-wrapper">
-                <SumsubVerification
-                  userId={user?.id || `user_${Date.now()}`}
-                  levelName="id-and-liveness"
-                  onComplete={handleVerificationComplete}
-                  onError={handleVerificationError}
-                />
+                <p style={{ color: 'var(--text-light)', textAlign: 'center', padding: '48px 0' }}>
+                  Identity verification is not yet connected. This is a placeholder.
+                </p>
                 <div className="kyc-actions" style={{ marginTop: '24px' }}>
                   <Button variant="secondary" onClick={() => setVerificationStarted(false)}>
                     Cancel

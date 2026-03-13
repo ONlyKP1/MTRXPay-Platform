@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { AnimatedSection } from '../components/AnimatedSection';
 
 export function ContactPage() {
@@ -114,7 +115,7 @@ export function ContactPage() {
             </div>
             <div className="hp-contact__info-block">
               <h3>For Merchants</h3>
-              <p>Already a merchant? Log in to your dashboard for direct support from your dedicated account manager.</p>
+              <p>Already a merchant? <Link to="/login" style={{ color: 'var(--hp-gold)' }}>Log in</Link> to your dashboard for direct support from your dedicated account manager.</p>
             </div>
           </AnimatedSection>
         </div>

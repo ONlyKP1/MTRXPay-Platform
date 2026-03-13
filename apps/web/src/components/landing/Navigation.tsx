@@ -4,10 +4,11 @@ import { useNavbarScroll } from '../../hooks/useScrollAnimation';
 
 const navLinks = [
   { label: 'Home', to: '/' },
-  { label: 'Pricing', to: '/pricing' },
   { label: 'About', to: '/about' },
-  { label: 'Contact', to: '/contact' },
+  { label: 'Pricing', to: '/pricing' },
+  { label: 'Technology', to: '/technology' },
   { label: 'FAQ', to: '/faq' },
+  { label: 'Contact', to: '/contact' },
 ];
 
 export function Navigation() {

@@ -7,6 +7,7 @@ import { AboutPage } from './pages/AboutPage';
 import { PricingPage } from './pages/PricingPage';
 import { ContactPage } from './pages/ContactPage';
 import { FAQPage } from './pages/FAQPage';
+import { TechnologyPage } from './pages/TechnologyPage';
 import { PublicLayout } from './components/layout/PublicLayout';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
@@ -46,26 +47,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="auth-layout">
-        <div style={{ textAlign: 'center' }}>
-          <div className="auth-logo">MTRX</div>
-          <p style={{ color: 'var(--text-light)', marginTop: '16px' }}>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return <>{children}</>;
-}
 
 function AppRoutes() {
   return (
@@ -76,33 +57,13 @@ function AppRoutes() {
       <Route path="/pricing" element={<PublicLayout><PricingPage /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
       <Route path="/faq" element={<PublicLayout><FAQPage /></PublicLayout>} />
+      <Route path="/technology" element={<PublicLayout><TechnologyPage /></PublicLayout>} />
       <Route path="/test" element={<MtrxWelcomePage />} />
 
-      {/* Auth Routes - redirect to dashboard if logged in */}
-      <Route
-        path="/login"
-        element={
-          <PublicOnlyRoute>
-            <LoginPage />
-          </PublicOnlyRoute>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <PublicOnlyRoute>
-            <RegisterPage />
-          </PublicOnlyRoute>
-        }
-      />
-      <Route
-        path="/forgot-password"
-        element={
-          <PublicOnlyRoute>
-            <ForgotPasswordPage />
-          </PublicOnlyRoute>
-        }
-      />
+      {/* Auth Routes */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
       {/* Protected Routes */}
       <Route

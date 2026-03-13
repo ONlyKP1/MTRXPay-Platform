@@ -45,10 +45,10 @@ export function Footer() {
           <div className="hp-footer__col">
             <h4 className="hp-footer__col-title">Product</h4>
             <nav className="hp-footer__col-links">
+              <Link to="/technology">Technology</Link>
               <a href="/#verticals">Supported Verticals</a>
               <Link to="/pricing">Pricing</Link>
               <Link to="/register">Merchant Onboarding</Link>
-              <Link to="/register">API Documentation</Link>
             </nav>
           </div>
 
