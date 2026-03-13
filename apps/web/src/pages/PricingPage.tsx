@@ -19,7 +19,20 @@ const CheckIcon = () => (
 export function PricingPage() {
 
   return (
-    <>
+    <div className="hp-pricing-page">
+      {/* Video background */}
+      <div className="hp-pricing-page__video-wrap">
+        <video
+          className="hp-pricing-page__video"
+          src="/pricing-bg.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+        <div className="hp-pricing-page__video-overlay" />
+      </div>
+
       {/* Header */}
       <section className="hp-pricing-page__header">
         <AnimatedSection animation="fade-up" style={{ textAlign: 'center' }}>
@@ -85,6 +98,6 @@ export function PricingPage() {
         </AnimatedSection>
       </section>
 
-    </>
+    </div>
   );
 }

@@ -58,10 +58,91 @@ export function AboutPage() {
           </h1>
           <p className="hp-section-subtitle">
             We started MTRX PAY because we lived the problem. Frozen funds, declined applications,
-            and opaque compliance decisions — we experienced it all. So we built the platform
+            and opaque compliance decisions, we experienced it all. So we built the platform
             we wished existed: transparent, compliant, and built specifically for the industries
             traditional processors won't touch.
           </p>
+        </AnimatedSection>
+      </section>
+
+      {/* Mission Quote */}
+      <section className="hp-about__mission">
+        <AnimatedSection animation="fade-up" style={{ textAlign: 'center' }}>
+          <blockquote className="hp-about__quote">
+            <span className="hp-about__quote-mark">&ldquo;</span>
+            Powering the next economy with secure, intelligent payment infrastructure.
+            <span className="hp-about__quote-mark">&rdquo;</span>
+          </blockquote>
+          <div className="hp-about__quote-attr">
+            <span className="hp-about__quote-line" />
+            <span>MTRX PAY COMPANY MISSION</span>
+            <span className="hp-about__quote-line" />
+          </div>
+        </AnimatedSection>
+      </section>
+
+      {/* Founders */}
+      <section className="hp-about__founders">
+        <AnimatedSection animation="fade-up" style={{ textAlign: 'center', marginBottom: 64 }}>
+          <span className="hp-section-label">From the Founders</span>
+          <h2 className="hp-section-title">
+            The team <em>behind MTRX</em>
+          </h2>
+        </AnimatedSection>
+
+        {/* Peter */}
+        <AnimatedSection className="hp-about__founder" animation="fade-up">
+          <div className="hp-about__founder-header">
+            <div className="hp-about__founder-avatar">PW</div>
+            <div>
+              <h3 className="hp-about__founder-name">Peter Watt</h3>
+              <span className="hp-about__founder-role">Founder</span>
+            </div>
+          </div>
+          <div className="hp-about__founder-body">
+            <p>Over the years, I've built businesses in sectors that traditional banks and payment processors struggle to understand. I've seen accounts restricted without warning. Funds held during critical growth phases.</p>
+            <p>It forces you to realise something quickly: <strong>if you don't control your infrastructure, you don't control your future.</strong></p>
+            <p>When I began working in emerging digital markets, it became clear that the payment layer was the weakest point. The sectors moving fastest were being supported by rails built for yesterday's economy.</p>
+            <p>So instead of looking for another workaround, I decided to build properly. I partnered with Keiran, a technical product specialist, and we began architecting our own backend from the ground up. Not a reseller model. Not a fragile overlay. But real infrastructure, designed with intelligent onboarding, structured risk controls, dynamic settlement logic, and long-term scalability built in from day one.</p>
+            <p>Wayne believed in that vision early. His support and belief in the scale of what we were building helped shape MTRX's foundation.</p>
+            <p>MTRX isn't a reaction. It's a deliberate move toward independence. Emerging markets aren't going away. They're expanding. And they require infrastructure that understands their velocity, complexity, and regulatory pressure, without collapsing under it.</p>
+            <p className="hp-about__founder-closing">We're building MTRX because the next generation of commerce deserves stronger rails.<br /><strong>Built by operators. Engineered by specialists. Designed for scale.</strong></p>
+          </div>
+        </AnimatedSection>
+
+        {/* Keiran */}
+        <AnimatedSection className="hp-about__founder" animation="fade-up">
+          <div className="hp-about__founder-header">
+            <div className="hp-about__founder-avatar">KP</div>
+            <div>
+              <h3 className="hp-about__founder-name">Keiran Perkins</h3>
+              <span className="hp-about__founder-role">Co-Founder</span>
+            </div>
+          </div>
+          <div className="hp-about__founder-body">
+            <p>I joined MTRX Pay because I saw the struggle up close. Peter's frustration with how high-risk merchants were sidelined sparked a fire in me. With a deep background in technology, I've spent years building solutions that bridge complexity and customer needs. This wasn't just another project, it was a mission.</p>
+            <p>I've always believed that technology is at its best when it's invisible, working seamlessly behind the scenes so customers can thrive. That's exactly how we've shaped MTRX Pay. Every piece of the platform is engineered with both precision and empathy.</p>
+            <p>Operationally, we stand alongside our merchants every step of the way. That means real people, real support, and 24/7 availability when it matters most. Payments don't sleep, and neither does responsibility, so our commitment goes beyond the platform itself.</p>
+            <p>We combine human support with disciplined operational oversight to ensure our merchants always feel backed, protected, and understood.</p>
+            <p className="hp-about__founder-closing">At the same time, we pledge to remain on the cutting edge of technology, continually innovating and evolving so our partners benefit from the most advanced, secure, and forward-thinking payment infrastructure available.</p>
+          </div>
+        </AnimatedSection>
+
+        {/* Wayne */}
+        <AnimatedSection className="hp-about__founder" animation="fade-up">
+          <div className="hp-about__founder-header">
+            <div className="hp-about__founder-avatar">WD</div>
+            <div>
+              <h3 className="hp-about__founder-name">Wayne Daniel</h3>
+              <span className="hp-about__founder-role">Co-Founder</span>
+            </div>
+          </div>
+          <div className="hp-about__founder-body">
+            <p>I joined MTRX Pay because I believed in what Peter and Keiran were building from the beginning. I've spent years working in marketing and brand leadership, helping businesses communicate clearly, grow responsibly, and build trust in complex environments. When I saw the vision for MTRX, real infrastructure built properly, not another workaround, I knew it needed to be positioned with the same level of care and discipline as the technology behind it.</p>
+            <p>My role is to ensure that how we present ourselves reflects who we are: measured, credible, and aligned with regulatory expectations. In markets where scrutiny is high and trust is everything, communication cannot be exaggerated or reactive, it must be accurate, responsible, and consistent.</p>
+            <p>Working alongside Peter and Keiran, I focus on bringing cohesion to our message, ensuring that product, operations, and market presence move in step. Innovation is important, but so is restraint. Growth matters, but so does compliance.</p>
+            <p className="hp-about__founder-closing"><strong>We're not here to create noise. We're here to build belief.</strong></p>
+          </div>
         </AnimatedSection>
       </section>
 

@@ -15,7 +15,7 @@ export function TickerStrip() {
     <div className="hp-ticker-wrap">
       <div className="hp-ticker">
         {[...chips, ...chips].map((chip, i) => (
-          <span key={i} className="hp-ticker__chip">{chip}</span>
+          <span key={i} className="hp-ticker__chip"><span className="hp-ticker__dot" />{chip}</span>
         ))}
       </div>
     </div>
