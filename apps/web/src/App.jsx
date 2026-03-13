@@ -1,21 +1,25 @@
-import { useState, useEffect } from 'react'
+import React, { useState } from 'react';
+import Navigation from './components/Navigation';
+import Hero from './components/Hero';
+import Features from './components/Features';
+import MerchantSections from './components/MerchantSections';
+import Pricing from './components/Pricing';
+import CTA from './components/CTA';
+import Footer from './components/Footer';
+import './App.css';
 
 function App() {
-  const [status, setStatus] = useState('checking...')
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then(res => res.json())
-      .then(data => setStatus(data.status))
-      .catch(() => setStatus('offline'))
-  }, [])
-
   return (
-    <div className="app">
-      <h1>MTRX Pay</h1>
-      <p>API Status: <span className={status === 'ok' ? 'online' : 'offline'}>{status}</span></p>
+    <div className="App">
+      <Navigation />
+      <Hero />
+      <Features />
+      <MerchantSections />
+      <Pricing />
+      <CTA />
+      <Footer />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
