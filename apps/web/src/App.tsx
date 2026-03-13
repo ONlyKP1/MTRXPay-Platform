@@ -6,6 +6,7 @@ import { LandingPage } from './pages/LandingPage';
 import { AboutPage } from './pages/AboutPage';
 import { PricingPage } from './pages/PricingPage';
 import { ContactPage } from './pages/ContactPage';
+import { FAQPage } from './pages/FAQPage';
 import { PublicLayout } from './components/layout/PublicLayout';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
@@ -74,6 +75,7 @@ function AppRoutes() {
       <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
       <Route path="/pricing" element={<PublicLayout><PricingPage /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+      <Route path="/faq" element={<PublicLayout><FAQPage /></PublicLayout>} />
       <Route path="/test" element={<MtrxWelcomePage />} />
 
       {/* Auth Routes - redirect to dashboard if logged in */}

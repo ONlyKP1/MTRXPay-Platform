@@ -7,6 +7,7 @@ const navLinks = [
   { label: 'Pricing', to: '/pricing' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
+  { label: 'FAQ', to: '/faq' },
 ];
 
 export function Navigation() {

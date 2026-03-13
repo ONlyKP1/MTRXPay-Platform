@@ -59,7 +59,7 @@ export function Footer() {
               <Link to="/about">About Us</Link>
               <Link to="/register">Careers</Link>
               <Link to="/contact">Contact</Link>
-              <Link to="/register">Partner Programme</Link>
+              <Link to="/faq">FAQ</Link>
             </nav>
           </div>
 

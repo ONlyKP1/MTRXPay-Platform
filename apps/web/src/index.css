@@ -11042,6 +11042,24 @@ select.form-input {
   max-width: 520px; margin: 0 auto;
 }
 
+.hp-pricing-page__coming-soon {
+  max-width: 520px; margin: 32px auto 0; padding: 0 24px;
+}
+.hp-pricing-page__coming-soon-inner {
+  display: flex; align-items: flex-start; gap: 16px;
+  background: var(--hp-gold-dim); border: 1px solid var(--hp-gold-border);
+  border-radius: 14px; padding: 20px 24px;
+}
+.hp-pricing-page__coming-soon-inner svg {
+  color: var(--hp-gold); flex-shrink: 0; margin-top: 2px;
+}
+.hp-pricing-page__coming-soon-inner strong {
+  display: block; font-size: 0.9rem; color: var(--hp-gold); margin-bottom: 4px;
+}
+.hp-pricing-page__coming-soon-inner p {
+  font-size: 0.82rem; line-height: 1.6; color: var(--hp-text-muted); margin: 0;
+}
+
 .hp-pricing-page__faq {
   padding: 80px 24px 100px; max-width: 800px; margin: 0 auto;
 }
