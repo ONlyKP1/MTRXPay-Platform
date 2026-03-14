@@ -12261,10 +12261,14 @@ select.form-input {
 }
 .hp-dash__bell {
   position: relative;
-  background: var(--hp-bg-card);
-  border: 1px solid var(--hp-border);
-  border-radius: var(--hp-radius-sm);
-  padding: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid transparent;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--hp-text-muted);
   cursor: pointer;
   transition: all var(--hp-transition);
@@ -12272,7 +12276,7 @@ select.form-input {
 .hp-dash__bell:hover {
   border-color: var(--hp-gold-border);
   color: var(--hp-gold);
-  box-shadow: 0 0 16px var(--hp-gold-glow);
+  background: rgba(197, 164, 78, 0.08);
 }
 .hp-dash__bell-dot {
   position: absolute;
@@ -14500,7 +14504,14 @@ select.form-input {
   z-index: 110;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  background: rgba(15, 20, 30, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--hp-gold-border);
+  border-radius: 60px;
+  padding: 6px 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(197, 164, 78, 0.08);
 }
 
 /* ── Search trigger ── */
@@ -14508,12 +14519,12 @@ select.form-input {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 16px;
-  border-radius: var(--hp-radius-sm);
-  border: 1px solid var(--hp-border);
-  background: var(--hp-bg-card);
+  padding: 10px 18px;
+  border-radius: 50px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--hp-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-family: inherit;
   cursor: pointer;
   transition: all var(--hp-transition);
@@ -14521,24 +14532,25 @@ select.form-input {
 .hp-dash__search-trigger:hover {
   border-color: var(--hp-gold-border);
   color: var(--hp-gold);
-  box-shadow: 0 0 16px var(--hp-gold-glow);
+  background: rgba(197, 164, 78, 0.08);
 }
 .hp-dash__search-trigger-text {
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
 }
 
 /* ── Kbd badge ── */
 .hp-dash__search-kbd {
   display: inline-flex;
   align-items: center;
-  padding: 2px 6px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--hp-border-light);
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(197, 164, 78, 0.1);
+  border: 1px solid var(--hp-gold-border);
   font-size: 0.6rem;
   font-weight: 700;
   font-family: inherit;
+  color: var(--hp-gold);
   color: var(--hp-text-muted);
   line-height: 1.4;
 }
@@ -14789,12 +14801,13 @@ select.form-input {
 /* ── Responsive — Search & Actions ── */
 @media (max-width: 768px) {
   .hp-dash__actions-bar {
-    top: 16px;
-    right: 16px;
+    top: 14px;
+    right: 14px;
     gap: 8px;
+    padding: 4px 6px;
   }
   .hp-dash__search-trigger {
-    padding: 9px 12px;
+    padding: 8px 12px;
   }
   .hp-dash__search-trigger-text {
     display: none;
