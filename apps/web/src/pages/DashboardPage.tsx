@@ -148,9 +148,15 @@ export function DashboardPage() {
         <div className="hp-dash__balance-amount">
           {formatCurrency(mockBalances[selectedCurrency])}
         </div>
-        <div className="hp-dash__balance-escrow">
-          <span>In Escrow (72hr hold):</span>
-          <span className="hp-dash__balance-escrow-val">{formatCurrency(mockEscrowTotal[selectedCurrency])}</span>
+        <div className="hp-dash__balance-footer">
+          <div className="hp-dash__balance-escrow">
+            <span>In Escrow (72hr hold):</span>
+            <span className="hp-dash__balance-escrow-val">{formatCurrency(mockEscrowTotal[selectedCurrency])}</span>
+          </div>
+          <div className="hp-dash__balance-processed">
+            <span className="hp-dash__balance-processed-label">Total Processed</span>
+            <span className="hp-dash__balance-processed-val">{formatCurrency(mockMetrics.totalProcessed, selectedCurrency)}</span>
+          </div>
         </div>
       </section>
 

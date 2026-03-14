@@ -12344,6 +12344,11 @@ select.form-input {
   background: radial-gradient(ellipse at top right, rgba(197, 164, 78, 0.04), transparent 70%);
   pointer-events: none;
 }
+.hp-dash__balance-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .hp-dash__balance-escrow {
   display: flex;
   align-items: center;
@@ -12354,6 +12359,25 @@ select.form-input {
 .hp-dash__balance-escrow-val {
   color: var(--hp-gold);
   font-weight: 700;
+}
+.hp-dash__balance-processed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: right;
+}
+.hp-dash__balance-processed-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hp-text-muted);
+}
+.hp-dash__balance-processed-val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--hp-gold);
 }
 .hp-dash__balance-top {
   display: flex;
