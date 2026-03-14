@@ -18,6 +18,9 @@ npm run migrate
 
 Run in order:
 1. `001_create_core_tables.sql` - Users, Merchants, Onboardings
+2. `002_update_user_roles.sql` - User role updates
+3. `003_update_roles_to_merchant.sql` - Set default role to merchant
+4. `004_add_profiles_and_timestamps.sql` - Profiles table, updated_at columns
 
 ## Creating New Migrations
 

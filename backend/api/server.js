@@ -3,6 +3,7 @@ const cors = require('cors');
 const { PORT } = require('./src/config/env');
 const { connectDB } = require('./src/config/database');
 const routes = require('./src/routes');
+const { errorHandler, notFoundHandler } = require('./src/middleware/errorHandler');
 
 const app = express();
 
@@ -12,6 +13,12 @@ app.use(express.json());
 
 // Routes
 app.use(routes);
+
+// 404 handler (after routes)
+app.use(notFoundHandler);
+
+// Global error handler (must be last)
+app.use(errorHandler);
 
 // Start server
 const start = async () => {

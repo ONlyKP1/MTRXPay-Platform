@@ -4,15 +4,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { query } = require('../config/database');
 const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/env');
+const { validateLogin, validateRegister } = require('../middleware/validate');
 
 // POST /api/auth/login
-router.post('/api/auth/login', async (req, res) => {
+router.post('/api/auth/login', validateLogin, async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password required' });
-    }
 
     // Find user
     const result = await query(
@@ -55,13 +52,9 @@ router.post('/api/auth/login', async (req, res) => {
 });
 
 // POST /api/auth/register
-router.post('/api/auth/register', async (req, res) => {
+router.post('/api/auth/register', validateRegister, async (req, res) => {
   try {
     const { full_name, email, password } = req.body;
-
-    if (!full_name || !email || !password) {
-      return res.status(400).json({ error: 'All fields required' });
-    }
 
     // Check if user exists
     const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
