@@ -21,14 +21,14 @@ VALUES (
   'admin'
 ) ON CONFLICT (id) DO NOTHING;
 
--- 3. Create merchant user (password: password123)
+-- 3. Create regular user (password: password123)
 INSERT INTO users (id, full_name, email, password_hash, role, merchant_id)
 VALUES (
   '33333333-3333-3333-3333-333333333333',
-  'Merchant User',
-  'merchant@testcompany.com',
+  'Test User',
+  'user@testcompany.com',
   '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW',
-  'merchant',
+  'user',
   '11111111-1111-1111-1111-111111111111'
 ) ON CONFLICT (id) DO NOTHING;
 
