@@ -4,7 +4,7 @@ function App() {
   const [status, setStatus] = useState('checking...')
 
   useEffect(() => {
-    fetch('/api/health')
+    fetch('/health')
       .then(res => res.json())
       .then(data => setStatus(data.status))
       .catch(() => setStatus('offline'))
