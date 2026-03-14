@@ -157,11 +157,6 @@ export function DashboardPage() {
       {/* Metrics Grid */}
       <section className="hp-dash__metrics">
         <div className="hp-dash__metric-card">
-          <div className="hp-dash__metric-icon">{icons.chart}</div>
-          <span className="hp-dash__metric-label">Total Processed</span>
-          <span className="hp-dash__metric-value">{formatCurrency(mockMetrics.totalProcessed, selectedCurrency)}</span>
-        </div>
-        <div className="hp-dash__metric-card">
           <div className="hp-dash__metric-icon">{icons.wallet}</div>
           <span className="hp-dash__metric-label">Current Account</span>
           <span className="hp-dash__metric-value">{formatCurrency(mockMetrics.currentAccount, selectedCurrency)}</span>
@@ -177,6 +172,12 @@ export function DashboardPage() {
           <span className="hp-dash__metric-label">In Escrow</span>
           <span className="hp-dash__metric-value">{formatCurrency(mockEscrowTotal[selectedCurrency])}</span>
           <span className="hp-dash__metric-sub">72hr hold period</span>
+        </div>
+        <div className="hp-dash__metric-card hp-dash__metric-card--action" onClick={() => navigate('/payouts')}>
+          <div className="hp-dash__metric-icon">{icons.chart}</div>
+          <span className="hp-dash__metric-label">Request Payout</span>
+          <span className="hp-dash__metric-value">Withdraw</span>
+          <span className="hp-dash__metric-sub">To your bank account</span>
         </div>
       </section>
 

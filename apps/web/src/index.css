@@ -12419,6 +12419,13 @@ select.form-input {
   transform: translateY(-4px);
   box-shadow: var(--hp-shadow-lg), 0 0 20px var(--hp-gold-glow);
 }
+.hp-dash__metric-card--action {
+  cursor: pointer;
+  border-color: var(--hp-gold-border);
+}
+.hp-dash__metric-card--action .hp-dash__metric-value {
+  color: var(--hp-gold);
+}
 .hp-dash__metric-card--warn {
   border-color: rgba(239, 68, 68, 0.2);
 }
