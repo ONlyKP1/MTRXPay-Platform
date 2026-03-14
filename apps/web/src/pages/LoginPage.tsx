@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export function LoginPage() {
-  const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -19,21 +18,29 @@ export function LoginPage() {
     // Simulate API call
     await new Promise((r) => setTimeout(r, 1500));
 
-    // Placeholder validation
-    if (!form.email || !form.password) {
-      setStatus('error');
-      setErrorMsg('Please enter your email and password.');
+    // Test credentials: test@mtrxpay.com / password123
+    if (form.email === 'test@mtrxpay.com' && form.password === 'password123') {
+      // Save mock user so dashboard ProtectedRoute allows access
+      const mockUser = {
+        id: 'test-merchant-001',
+        email: 'test@mtrxpay.com',
+        phone: '+44 7700 900000',
+        firstName: 'Test',
+        lastName: 'Merchant',
+        emailVerified: true,
+        phoneVerified: true,
+        isKnownCustomer: true,
+        kycStatus: 'approved',
+        createdAt: new Date().toISOString(),
+      };
+      localStorage.setItem('mtrx_user', JSON.stringify(mockUser));
+      setStatus('success');
+      setTimeout(() => window.location.href = '/dashboard', 1200);
       return;
     }
 
-    if (form.password.length < 6) {
-      setStatus('error');
-      setErrorMsg('Invalid email or password. Please try again.');
-      return;
-    }
-
-    setStatus('success');
-    setTimeout(() => navigate('/dashboard'), 1200);
+    setStatus('error');
+    setErrorMsg('Invalid email or password. Please try again.');
   };
 
   return (

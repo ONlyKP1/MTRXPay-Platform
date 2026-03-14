@@ -18,7 +18,8 @@ import { AccountTypePage } from './pages/AccountTypePage';
 import { KYCIndividualPage } from './pages/KYCIndividualPage';
 import { KYBPage } from './pages/KYBPage';
 import { DashboardPage } from './pages/DashboardPage';
-import { SubscriptionsPage } from './pages/SubscriptionsPage';
+import { PayoutsPage } from './pages/SubscriptionsPage';
+import { SubscriptionManagementPage } from './pages/SubscriptionManagementPage';
 import { IndustrySelectPage } from './pages/IndustrySelectPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { CompliancePage } from './pages/CompliancePage';
@@ -123,10 +124,18 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/payouts"
+        element={
+          <ProtectedRoute>
+            <PayoutsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/subscriptions"
         element={
           <ProtectedRoute>
-            <SubscriptionsPage />
+            <SubscriptionManagementPage />
           </ProtectedRoute>
         }
       />

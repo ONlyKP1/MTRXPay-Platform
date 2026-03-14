@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { Button, Alert } from '../components/common';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
 
 type PayoutSchedule = 'daily' | 'weekly' | 'biweekly' | 'monthly';
-type Currency = 'GBP' | 'EUR' | 'USD' | 'AED';
 
 const scheduleOptions: { value: PayoutSchedule; label: string; description: string }[] = [
   { value: 'daily', label: 'Daily', description: 'Receive payouts every business day' },
@@ -13,13 +11,11 @@ const scheduleOptions: { value: PayoutSchedule; label: string; description: stri
   { value: 'monthly', label: 'Monthly', description: 'Receive payouts on the 1st of each month' },
 ];
 
-const mockSubscriptionData = {
-  plan: 'Professional',
+const mockPayoutConfig = {
   currentSchedule: 'weekly' as PayoutSchedule,
   escrowPeriod: 72,
   feeRate: 2.9,
-  monthlyFee: 49.99,
-  currency: 'GBP' as Currency,
+  currency: 'GBP',
   bankAccount: {
     name: 'Business Account',
     bank: 'Barclays',
@@ -39,219 +35,212 @@ const mockPayoutHistory = [
   { id: 'PAY-H002', date: '2026-01-10', amount: 11890.50, status: 'completed' },
   { id: 'PAY-H003', date: '2026-01-03', amount: 9420.00, status: 'completed' },
   { id: 'PAY-H004', date: '2025-12-27', amount: 16580.75, status: 'completed' },
+  { id: 'PAY-H005', date: '2025-12-20', amount: 13200.00, status: 'completed' },
+  { id: 'PAY-H006', date: '2025-12-13', amount: 10840.25, status: 'completed' },
 ];
 
-export function SubscriptionsPage() {
+export function PayoutsPage() {
   const navigate = useNavigate();
-  const { user: _user } = useAuth();
-  const [selectedSchedule, setSelectedSchedule] = useState<PayoutSchedule>(mockSubscriptionData.currentSchedule);
+  const [selectedSchedule, setSelectedSchedule] = useState<PayoutSchedule>(mockPayoutConfig.currentSchedule);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const formatCurrency = (amount: number) => {
-    return `£${amount.toLocaleString('en-GB', { minimumFractionDigits: 2 })}`;
-  };
-
-  const handleScheduleChange = (schedule: PayoutSchedule) => {
-    setSelectedSchedule(schedule);
+    return `\u00A3${amount.toLocaleString('en-GB', { minimumFractionDigits: 2 })}`;
   };
 
   const handleSaveChanges = async () => {
     setIsSaving(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsSaving(false);
     setShowConfirmModal(false);
     alert('Payout schedule updated successfully!');
   };
 
-  const hasChanges = selectedSchedule !== mockSubscriptionData.currentSchedule;
+  const hasChanges = selectedSchedule !== mockPayoutConfig.currentSchedule;
+  const totalPaid = mockPayoutHistory.reduce((sum, p) => sum + p.amount, 0);
+  const totalUpcoming = mockUpcomingPayouts.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="dashboard-layout">
-      <div className="dashboard-container">
-        {/* Header */}
-        <header className="dashboard-header">
-          <div className="header-back" onClick={() => navigate('/dashboard')}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            <span>Back to Dashboard</span>
-          </div>
-          <img src="/logo.png" alt="MTRX Pay" className="dashboard-logo-img" />
-        </header>
+    <DashboardLayout>
+      <div className="hp-dash__page-header">
+        <h1 className="hp-dash__page-title">Payouts</h1>
+      </div>
 
-        <h1 className="page-title">Payout & Subscription Management</h1>
-
-        {/* Current Plan Card */}
-        <div className="subscription-card plan-card">
-          <div className="plan-header">
-            <div>
-              <span className="plan-label">Current Plan</span>
-              <h2 className="plan-name">{mockSubscriptionData.plan}</h2>
-            </div>
-            <div className="plan-badge">Active</div>
-          </div>
-          <div className="plan-details">
-            <div className="plan-detail">
-              <span className="detail-label">Transaction Fee</span>
-              <span className="detail-value">{mockSubscriptionData.feeRate}%</span>
-            </div>
-            <div className="plan-detail">
-              <span className="detail-label">Monthly Fee</span>
-              <span className="detail-value">{formatCurrency(mockSubscriptionData.monthlyFee)}</span>
-            </div>
-            <div className="plan-detail">
-              <span className="detail-label">Escrow Period</span>
-              <span className="detail-value">{mockSubscriptionData.escrowPeriod} hours</span>
-            </div>
-          </div>
+      {/* Summary Metrics */}
+      <div className="hp-dash__metrics">
+        <div className="hp-dash__metric-card">
+          <span className="hp-dash__metric-label">Next Payout</span>
+          <span className="hp-dash__metric-value">{formatCurrency(mockUpcomingPayouts[0].amount)}</span>
+          <span className="hp-dash__metric-sub">{mockUpcomingPayouts[0].date}</span>
         </div>
+        <div className="hp-dash__metric-card">
+          <span className="hp-dash__metric-label">Upcoming Total</span>
+          <span className="hp-dash__metric-value">{formatCurrency(totalUpcoming)}</span>
+          <span className="hp-dash__metric-sub">{mockUpcomingPayouts.length} scheduled</span>
+        </div>
+        <div className="hp-dash__metric-card">
+          <span className="hp-dash__metric-label">Total Paid Out</span>
+          <span className="hp-dash__metric-value">{formatCurrency(totalPaid)}</span>
+          <span className="hp-dash__metric-sub">Last 6 payouts</span>
+        </div>
+        <div className="hp-dash__metric-card">
+          <span className="hp-dash__metric-label">Escrow Period</span>
+          <span className="hp-dash__metric-value">{mockPayoutConfig.escrowPeriod}hrs</span>
+          <span className="hp-dash__metric-sub">Hold duration</span>
+        </div>
+      </div>
 
-        {/* Payout Schedule Selection */}
-        <div className="subscription-section">
-          <h3 className="section-title">Payout Schedule</h3>
-          <p className="section-description">Choose how often you'd like to receive your payouts</p>
-
-          <div className="schedule-options">
-            {scheduleOptions.map((option) => (
-              <div
-                key={option.value}
-                className={`schedule-option ${selectedSchedule === option.value ? 'selected' : ''}`}
-                onClick={() => handleScheduleChange(option.value)}
-              >
-                <div className="schedule-radio">
-                  <div className="radio-outer">
-                    {selectedSchedule === option.value && <div className="radio-inner" />}
-                  </div>
-                </div>
-                <div className="schedule-content">
-                  <span className="schedule-label">{option.label}</span>
-                  <span className="schedule-description">{option.description}</span>
-                </div>
-                {option.value === mockSubscriptionData.currentSchedule && (
-                  <span className="current-badge">Current</span>
-                )}
+      {/* Payout Schedule */}
+      <section className="hp-dash__card-section">
+        <span className="hp-dash__section-label">Payout Schedule</span>
+        <p className="hp-dash__text-muted" style={{ marginBottom: 16 }}>Choose how often you'd like to receive your payouts</p>
+        <div className="hp-dash__schedule-grid">
+          {scheduleOptions.map((option) => (
+            <div
+              key={option.value}
+              className={`hp-dash__schedule-option${selectedSchedule === option.value ? ' hp-dash__schedule-option--active' : ''}`}
+              onClick={() => setSelectedSchedule(option.value)}
+            >
+              <div className="hp-dash__radio">
+                {selectedSchedule === option.value && <div className="hp-dash__radio-dot" />}
               </div>
-            ))}
-          </div>
-
-          {hasChanges && (
-            <div className="schedule-actions">
-              <Alert type="info">
-                Changing your payout schedule will take effect from the next payout cycle.
-              </Alert>
-              <Button onClick={() => setShowConfirmModal(true)}>
-                Save Changes
-              </Button>
+              <div>
+                <span className="hp-dash__schedule-label">{option.label}</span>
+                <span className="hp-dash__text-muted">{option.description}</span>
+              </div>
+              {option.value === mockPayoutConfig.currentSchedule && (
+                <span className="hp-dash__action-badge">Current</span>
+              )}
             </div>
-          )}
+          ))}
         </div>
-
-        {/* Bank Account */}
-        <div className="subscription-section">
-          <div className="section-header">
-            <h3 className="section-title">Payout Destination</h3>
-            <button className="edit-btn">Edit</button>
-          </div>
-          <div className="bank-card">
-            <div className="bank-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <line x1="3" y1="9" x2="21" y2="9"/>
-              </svg>
-            </div>
-            <div className="bank-details">
-              <span className="bank-name">{mockSubscriptionData.bankAccount.name}</span>
-              <span className="bank-info">
-                {mockSubscriptionData.bankAccount.bank} •••• {mockSubscriptionData.bankAccount.lastFour}
+        {hasChanges && (
+          <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="hp-dash__alert hp-dash__alert--info">
+              <span className="hp-dash__alert-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
+                </svg>
               </span>
-              <span className="bank-sort">Sort Code: {mockSubscriptionData.bankAccount.sortCode}</span>
+              <span>Changing your payout schedule will take effect from the next payout cycle.</span>
             </div>
-            <div className="bank-verified">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-              Verified
-            </div>
-          </div>
-        </div>
-
-        {/* Upcoming Payouts */}
-        <div className="subscription-section">
-          <h3 className="section-title">Upcoming Payouts</h3>
-          <div className="payouts-list">
-            {mockUpcomingPayouts.map((payout) => (
-              <div key={payout.id} className={`payout-item ${payout.status}`}>
-                <div className="payout-info">
-                  <span className="payout-id">{payout.id}</span>
-                  <span className="payout-date">{payout.date}</span>
-                </div>
-                <div className="payout-amount">{formatCurrency(payout.amount)}</div>
-                <span className={`payout-status ${payout.status}`}>
-                  {payout.status === 'scheduled' && 'Scheduled'}
-                  {payout.status === 'pending' && 'Pending'}
-                  {payout.status === 'estimated' && 'Estimated'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Payout History */}
-        <div className="subscription-section">
-          <div className="section-header">
-            <h3 className="section-title">Payout History</h3>
-            <button className="view-all-btn" onClick={() => navigate('/transactions?type=payouts')}>
-              View All
-            </button>
-          </div>
-          <div className="payouts-list history">
-            {mockPayoutHistory.map((payout) => (
-              <div key={payout.id} className="payout-item completed">
-                <div className="payout-info">
-                  <span className="payout-id">{payout.id}</span>
-                  <span className="payout-date">{payout.date}</span>
-                </div>
-                <div className="payout-amount">{formatCurrency(payout.amount)}</div>
-                <span className="payout-status completed">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                  Completed
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Confirm Modal */}
-        {showConfirmModal && (
-          <div className="modal-overlay" onClick={() => setShowConfirmModal(false)}>
-            <div className="compose-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h3>Confirm Schedule Change</h3>
-                <button className="modal-close" onClick={() => setShowConfirmModal(false)}>×</button>
-              </div>
-              <div className="modal-body">
-                <p>Are you sure you want to change your payout schedule from <strong>{mockSubscriptionData.currentSchedule}</strong> to <strong>{selectedSchedule}</strong>?</p>
-                <Alert type="info">
-                  This change will take effect from your next payout cycle. Your current scheduled payouts will not be affected.
-                </Alert>
-              </div>
-              <div className="modal-footer">
-                <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveChanges} disabled={isSaving}>
-                  {isSaving ? 'Saving...' : 'Confirm Change'}
-                </Button>
-              </div>
-            </div>
+            <button className="hp-dash__btn-gold" onClick={() => setShowConfirmModal(true)}>Save Changes</button>
           </div>
         )}
-      </div>
-    </div>
+      </section>
+
+      {/* Bank Account */}
+      <section className="hp-dash__card-section">
+        <div className="hp-dash__section-header">
+          <span className="hp-dash__section-label">Payout Destination</span>
+          <button className="hp-dash__btn-outline hp-dash__btn-sm">Edit</button>
+        </div>
+        <div className="hp-dash__bank-card">
+          <div className="hp-dash__bank-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" />
+            </svg>
+          </div>
+          <div className="hp-dash__bank-details">
+            <span className="hp-dash__bank-name">{mockPayoutConfig.bankAccount.name}</span>
+            <span className="hp-dash__text-muted">{mockPayoutConfig.bankAccount.bank} •••• {mockPayoutConfig.bankAccount.lastFour}</span>
+            <span className="hp-dash__text-muted">Sort Code: {mockPayoutConfig.bankAccount.sortCode}</span>
+          </div>
+          <span className="hp-dash__status hp-dash__status--completed" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            Verified
+          </span>
+        </div>
+      </section>
+
+      {/* Upcoming Payouts */}
+      <section className="hp-dash__transactions">
+        <span className="hp-dash__section-label" style={{ marginBottom: 16, display: 'inline-flex' }}>Upcoming Payouts</span>
+        <div className="hp-dash__table-wrap">
+          <table className="hp-dash__table">
+            <thead>
+              <tr>
+                <th>Payout ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mockUpcomingPayouts.map((p) => (
+                <tr key={p.id}>
+                  <td className="hp-dash__txn-id">{p.id}</td>
+                  <td>{p.date}</td>
+                  <td>{formatCurrency(p.amount)}</td>
+                  <td><span className={`hp-dash__status hp-dash__status--${p.status}`}>{p.status}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Payout History */}
+      <section className="hp-dash__transactions">
+        <div className="hp-dash__section-header" style={{ marginBottom: 16 }}>
+          <span className="hp-dash__section-label">Payout History</span>
+          <button className="hp-dash__view-all" onClick={() => navigate('/transactions?type=payouts')}>View All</button>
+        </div>
+        <div className="hp-dash__table-wrap">
+          <table className="hp-dash__table">
+            <thead>
+              <tr>
+                <th>Payout ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mockPayoutHistory.map((p) => (
+                <tr key={p.id}>
+                  <td className="hp-dash__txn-id">{p.id}</td>
+                  <td>{p.date}</td>
+                  <td>{formatCurrency(p.amount)}</td>
+                  <td><span className="hp-dash__status hp-dash__status--completed">Completed</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Confirm Modal */}
+      {showConfirmModal && (
+        <div className="hp-dash__modal-overlay" onClick={() => setShowConfirmModal(false)}>
+          <div className="hp-dash__modal" onClick={(e) => e.stopPropagation()}>
+            <div className="hp-dash__modal-header">
+              <h3>Confirm Schedule Change</h3>
+              <button className="hp-dash__modal-close" onClick={() => setShowConfirmModal(false)}>&times;</button>
+            </div>
+            <div className="hp-dash__modal-body">
+              <p style={{ marginBottom: 16 }}>Are you sure you want to change your payout schedule from <strong>{mockPayoutConfig.currentSchedule}</strong> to <strong>{selectedSchedule}</strong>?</p>
+              <div className="hp-dash__alert hp-dash__alert--info">
+                <span className="hp-dash__alert-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
+                  </svg>
+                </span>
+                <span>This change will take effect from your next payout cycle.</span>
+              </div>
+            </div>
+            <div className="hp-dash__modal-footer">
+              <button className="hp-dash__modal-cancel" onClick={() => setShowConfirmModal(false)}>Cancel</button>
+              <button className="hp-dash__modal-send" onClick={handleSaveChanges} disabled={isSaving}>
+                {isSaving ? 'Saving...' : 'Confirm Change'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </DashboardLayout>
   );
 }

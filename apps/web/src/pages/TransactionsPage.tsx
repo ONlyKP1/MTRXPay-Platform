@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/common';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
 
 type Currency = 'GBP' | 'EUR' | 'USD' | 'AED';
 type TransactionStatus = 'completed' | 'pending' | 'failed' | 'refunded';
@@ -33,7 +32,6 @@ const mockTransactions: Transaction[] = [
 ];
 
 export function TransactionsPage() {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<TransactionStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<TransactionType | 'all'>('all');
@@ -60,138 +58,117 @@ export function TransactionsPage() {
     .reduce((sum, t) => sum + t.amount, 0);
 
   return (
-    <div className="dashboard-layout">
-      <div className="dashboard-container">
-        {/* Header */}
-        <header className="dashboard-header">
-          <div className="header-back" onClick={() => navigate('/dashboard')}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            <span>Back to Dashboard</span>
-          </div>
-          <img src="/logo.png" alt="MTRX Pay" className="dashboard-logo-img" />
-        </header>
+    <DashboardLayout>
+      <div className="hp-dash__page-header">
+        <h1 className="hp-dash__page-title">Transaction Data</h1>
+      </div>
 
-        <h1 className="page-title">Transaction Data</h1>
-
-        {/* Summary Cards */}
-        <div className="summary-cards">
-          <div className="summary-card">
-            <span className="summary-label">Total Transactions</span>
-            <span className="summary-value">{filteredTransactions.length}</span>
-          </div>
-          <div className="summary-card">
-            <span className="summary-label">Completed Payments</span>
-            <span className="summary-value">{formatCurrency(totalAmount, 'GBP')}</span>
-          </div>
-          <div className="summary-card">
-            <span className="summary-label">Pending</span>
-            <span className="summary-value">{filteredTransactions.filter(t => t.status === 'pending').length}</span>
-          </div>
-          <div className="summary-card">
-            <span className="summary-label">Failed</span>
-            <span className="summary-value">{filteredTransactions.filter(t => t.status === 'failed').length}</span>
-          </div>
+      {/* Summary Cards */}
+      <div className="hp-dash__metrics">
+        <div className="hp-dash__metric-card">
+          <span className="hp-dash__metric-label">Total Transactions</span>
+          <span className="hp-dash__metric-value">{filteredTransactions.length}</span>
         </div>
+        <div className="hp-dash__metric-card">
+          <span className="hp-dash__metric-label">Completed Payments</span>
+          <span className="hp-dash__metric-value">{formatCurrency(totalAmount, 'GBP')}</span>
+        </div>
+        <div className="hp-dash__metric-card">
+          <span className="hp-dash__metric-label">Pending</span>
+          <span className="hp-dash__metric-value">{filteredTransactions.filter(t => t.status === 'pending').length}</span>
+        </div>
+        <div className="hp-dash__metric-card">
+          <span className="hp-dash__metric-label">Failed</span>
+          <span className="hp-dash__metric-value">{filteredTransactions.filter(t => t.status === 'failed').length}</span>
+        </div>
+      </div>
 
-        {/* Filters */}
-        <div className="filters-section">
-          <div className="search-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="M21 21l-4.35-4.35"/>
-            </svg>
-            <input
-              type="text"
-              placeholder="Search by ID, customer, or reference..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
-          <div className="filter-group">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as TransactionStatus | 'all')}
-              className="filter-select"
-            >
+      {/* Filters */}
+      <section className="hp-dash__filters">
+        <div className="hp-dash__search-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by ID, customer, or reference..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="hp-dash__search-input"
+          />
+        </div>
+        <div className="hp-dash__filter-row">
+          <div className="hp-dash__field hp-dash__field--inline">
+            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as TransactionStatus | 'all')}>
               <option value="all">All Status</option>
               <option value="completed">Completed</option>
               <option value="pending">Pending</option>
               <option value="failed">Failed</option>
               <option value="refunded">Refunded</option>
             </select>
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value as TransactionType | 'all')}
-              className="filter-select"
-            >
+          </div>
+          <div className="hp-dash__field hp-dash__field--inline">
+            <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TransactionType | 'all')}>
               <option value="all">All Types</option>
               <option value="payment">Payments</option>
               <option value="payout">Payouts</option>
               <option value="refund">Refunds</option>
               <option value="chargeback">Chargebacks</option>
             </select>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="filter-date"
-              placeholder="From"
-            />
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="filter-date"
-              placeholder="To"
-            />
           </div>
-          <Button variant="secondary">
-            Export CSV
-          </Button>
-        </div>
-
-        {/* Transactions Table */}
-        <div className="transactions-section">
-          <div className="transactions-table full">
-            <div className="table-header">
-              <span>Transaction ID</span>
-              <span>Date & Time</span>
-              <span>Customer</span>
-              <span>Type</span>
-              <span>Amount</span>
-              <span>Status</span>
-            </div>
-            {filteredTransactions.map((txn) => (
-              <div key={txn.id} className="table-row clickable">
-                <span className="txn-id">{txn.id}</span>
-                <span>
-                  <div>{txn.date}</div>
-                  <div className="txn-time">{txn.time}</div>
-                </span>
-                <span>
-                  <div>{txn.customer}</div>
-                  <div className="txn-email">{txn.email}</div>
-                </span>
-                <span className={`txn-type ${txn.type}`}>{txn.type}</span>
-                <span className={txn.type === 'refund' || txn.type === 'chargeback' ? 'amount-negative' : ''}>
-                  {txn.type === 'refund' || txn.type === 'chargeback' ? '-' : ''}
-                  {formatCurrency(txn.amount, txn.currency)}
-                </span>
-                <span className={`txn-status ${txn.status}`}>{txn.status}</span>
-              </div>
-            ))}
+          <div className="hp-dash__field hp-dash__field--inline">
+            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
           </div>
-
-          {filteredTransactions.length === 0 && (
-            <div className="empty-state">
-              <p>No transactions found matching your filters.</p>
-            </div>
-          )}
+          <div className="hp-dash__field hp-dash__field--inline">
+            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+          </div>
+          <button className="hp-dash__btn-outline">Export CSV</button>
         </div>
-      </div>
-    </div>
+      </section>
+
+      {/* Transactions Table */}
+      <section className="hp-dash__transactions">
+        <div className="hp-dash__table-wrap">
+          <table className="hp-dash__table">
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Date & Time</th>
+                <th>Customer</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTransactions.map((txn) => (
+                <tr key={txn.id}>
+                  <td className="hp-dash__txn-id">{txn.id}</td>
+                  <td>
+                    <div>{txn.date}</div>
+                    <div className="hp-dash__text-muted">{txn.time}</div>
+                  </td>
+                  <td>
+                    <div>{txn.customer}</div>
+                    <div className="hp-dash__text-muted">{txn.email}</div>
+                  </td>
+                  <td><span className={`hp-dash__type-badge hp-dash__type-badge--${txn.type}`}>{txn.type}</span></td>
+                  <td className={txn.type === 'refund' || txn.type === 'chargeback' ? 'hp-dash__text-red' : ''}>
+                    {txn.type === 'refund' || txn.type === 'chargeback' ? '-' : ''}
+                    {formatCurrency(txn.amount, txn.currency)}
+                  </td>
+                  <td><span className={`hp-dash__status hp-dash__status--${txn.status}`}>{txn.status}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {filteredTransactions.length === 0 && (
+          <div className="hp-dash__empty">
+            <p>No transactions found matching your filters.</p>
+          </div>
+        )}
+      </section>
+    </DashboardLayout>
   );
 }
