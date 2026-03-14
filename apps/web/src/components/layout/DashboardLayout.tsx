@@ -140,7 +140,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <span className="hp-dash__user-name">{user?.firstName} {user?.lastName}</span>
               <span className="hp-dash__user-email">{user?.email}</span>
             </div>
-            {getKycBadge()}
+            {/* KYC badge removed */}
           </div>
           <button className="hp-dash__sign-out" onClick={handleLogout}>
             {icons.signOut}
