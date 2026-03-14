@@ -2,64 +2,91 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 
-type PayoutSchedule = 'daily' | 'weekly' | 'biweekly' | 'monthly';
+const INITIAL_BALANCE = 31_842.75;
 
-const scheduleOptions: { value: PayoutSchedule; label: string; description: string }[] = [
-  { value: 'daily', label: 'Daily', description: 'Receive payouts every business day' },
-  { value: 'weekly', label: 'Weekly', description: 'Receive payouts every Monday' },
-  { value: 'biweekly', label: 'Bi-Weekly', description: 'Receive payouts every other Monday' },
-  { value: 'monthly', label: 'Monthly', description: 'Receive payouts on the 1st of each month' },
+interface Payout {
+  id: string;
+  date: string;
+  amount: number;
+  status: string;
+}
+
+const initialUpcomingPayouts: Payout[] = [
+  { id: 'PAY-001', date: '2026-03-18', amount: 8_240.00, status: 'scheduled' },
+  { id: 'PAY-002', date: '2026-03-25', amount: 6_715.30, status: 'pending' },
+  { id: 'PAY-003', date: '2026-04-01', amount: 9_380.50, status: 'estimated' },
 ];
 
-const mockPayoutConfig = {
-  currentSchedule: 'weekly' as PayoutSchedule,
-  escrowPeriod: 72,
-  feeRate: 2.9,
-  currency: 'GBP',
-  bankAccount: {
-    name: 'Business Account',
-    bank: 'Barclays',
-    lastFour: '4521',
-    sortCode: '20-00-00',
-  },
+const mockPayoutHistory: Payout[] = [
+  { id: 'PAY-H001', date: '2026-03-11', amount: 7_520.00, status: 'completed' },
+  { id: 'PAY-H002', date: '2026-03-04', amount: 5_935.60, status: 'completed' },
+  { id: 'PAY-H003', date: '2026-02-25', amount: 4_180.25, status: 'completed' },
+  { id: 'PAY-H004', date: '2026-02-18', amount: 8_460.90, status: 'completed' },
+  { id: 'PAY-H005', date: '2026-02-11', amount: 6_320.00, status: 'completed' },
+  { id: 'PAY-H006', date: '2026-02-04', amount: 3_750.45, status: 'completed' },
+];
+
+const escrowPeriod = 72;
+const bankAccount = {
+  name: 'Business Account',
+  bank: 'Barclays',
+  lastFour: '4521',
+  sortCode: '20-00-00',
 };
 
-const mockUpcomingPayouts = [
-  { id: 'PAY-001', date: '2026-01-24', amount: 15420.00, status: 'scheduled' },
-  { id: 'PAY-002', date: '2026-01-31', amount: 12890.50, status: 'pending' },
-  { id: 'PAY-003', date: '2026-02-07', amount: 18750.00, status: 'estimated' },
-];
+const formatDate = (iso: string) => {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+};
 
-const mockPayoutHistory = [
-  { id: 'PAY-H001', date: '2026-01-17', amount: 14250.00, status: 'completed' },
-  { id: 'PAY-H002', date: '2026-01-10', amount: 11890.50, status: 'completed' },
-  { id: 'PAY-H003', date: '2026-01-03', amount: 9420.00, status: 'completed' },
-  { id: 'PAY-H004', date: '2025-12-27', amount: 16580.75, status: 'completed' },
-  { id: 'PAY-H005', date: '2025-12-20', amount: 13200.00, status: 'completed' },
-  { id: 'PAY-H006', date: '2025-12-13', amount: 10840.25, status: 'completed' },
-];
+let payoutCounter = 4; // next ID after PAY-003
 
 export function PayoutsPage() {
   const navigate = useNavigate();
-  const [selectedSchedule, setSelectedSchedule] = useState<PayoutSchedule>(mockPayoutConfig.currentSchedule);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [payoutAmount, setPayoutAmount] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [balance, setBalance] = useState(INITIAL_BALANCE);
+  const [upcomingPayouts, setUpcomingPayouts] = useState<Payout[]>(initialUpcomingPayouts);
 
   const formatCurrency = (amount: number) => {
     return `\u00A3${amount.toLocaleString('en-GB', { minimumFractionDigits: 2 })}`;
   };
 
-  const handleSaveChanges = async () => {
-    setIsSaving(true);
+  const handleRequestPayout = async () => {
+    const amount = parseFloat(payoutAmount);
+    if (!amount || amount <= 0 || amount > balance) return;
+
+    setIsSubmitting(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSaving(false);
-    setShowConfirmModal(false);
-    alert('Payout schedule updated successfully!');
+
+    // Generate a payout date 7 days from now
+    const payoutDate = new Date();
+    payoutDate.setDate(payoutDate.getDate() + 7);
+    const dateStr = payoutDate.toISOString().slice(0, 10);
+
+    const newPayout: Payout = {
+      id: `PAY-00${payoutCounter++}`,
+      date: dateStr,
+      amount,
+      status: 'pending',
+    };
+
+    setBalance(prev => prev - amount);
+    setUpcomingPayouts(prev => [newPayout, ...prev]);
+    setIsSubmitting(false);
+    setShowRequestModal(false);
+    setPayoutAmount('');
+    setSuccessToast(`Payout of ${formatCurrency(amount)} submitted`);
+    setTimeout(() => setSuccessToast(null), 4000);
   };
 
-  const hasChanges = selectedSchedule !== mockPayoutConfig.currentSchedule;
   const totalPaid = mockPayoutHistory.reduce((sum, p) => sum + p.amount, 0);
-  const totalUpcoming = mockUpcomingPayouts.reduce((sum, p) => sum + p.amount, 0);
+  const totalUpcoming = upcomingPayouts.reduce((sum, p) => sum + p.amount, 0);
+
+  const parsedAmount = parseFloat(payoutAmount);
+  const isValidAmount = parsedAmount > 0 && parsedAmount <= balance;
 
   return (
     <DashboardLayout>
@@ -70,64 +97,36 @@ export function PayoutsPage() {
       {/* Summary Metrics */}
       <div className="hp-dash__metrics">
         <div className="hp-dash__metric-card">
-          <span className="hp-dash__metric-label">Next Payout</span>
-          <span className="hp-dash__metric-value">{formatCurrency(mockUpcomingPayouts[0].amount)}</span>
-          <span className="hp-dash__metric-sub">{mockUpcomingPayouts[0].date}</span>
+          <span className="hp-dash__metric-label">Available Balance</span>
+          <span className="hp-dash__metric-value">{formatCurrency(balance)}</span>
+          <span className="hp-dash__metric-sub">GBP</span>
         </div>
         <div className="hp-dash__metric-card">
           <span className="hp-dash__metric-label">Upcoming Total</span>
           <span className="hp-dash__metric-value">{formatCurrency(totalUpcoming)}</span>
-          <span className="hp-dash__metric-sub">{mockUpcomingPayouts.length} scheduled</span>
+          <span className="hp-dash__metric-sub">{upcomingPayouts.length} scheduled</span>
         </div>
         <div className="hp-dash__metric-card">
           <span className="hp-dash__metric-label">Total Paid Out</span>
           <span className="hp-dash__metric-value">{formatCurrency(totalPaid)}</span>
-          <span className="hp-dash__metric-sub">Last 6 payouts</span>
+          <span className="hp-dash__metric-sub">Last {mockPayoutHistory.length} payouts</span>
         </div>
         <div className="hp-dash__metric-card">
           <span className="hp-dash__metric-label">Escrow Period</span>
-          <span className="hp-dash__metric-value">{mockPayoutConfig.escrowPeriod}hrs</span>
+          <span className="hp-dash__metric-value">{escrowPeriod}hrs</span>
           <span className="hp-dash__metric-sub">Hold duration</span>
         </div>
       </div>
 
-      {/* Payout Schedule */}
+      {/* Request Payout */}
       <section className="hp-dash__card-section">
-        <span className="hp-dash__section-label">Payout Schedule</span>
-        <p className="hp-dash__text-muted" style={{ marginBottom: 16 }}>Choose how often you'd like to receive your payouts</p>
-        <div className="hp-dash__schedule-grid">
-          {scheduleOptions.map((option) => (
-            <div
-              key={option.value}
-              className={`hp-dash__schedule-option${selectedSchedule === option.value ? ' hp-dash__schedule-option--active' : ''}`}
-              onClick={() => setSelectedSchedule(option.value)}
-            >
-              <div className="hp-dash__radio">
-                {selectedSchedule === option.value && <div className="hp-dash__radio-dot" />}
-              </div>
-              <div>
-                <span className="hp-dash__schedule-label">{option.label}</span>
-                <span className="hp-dash__text-muted">{option.description}</span>
-              </div>
-              {option.value === mockPayoutConfig.currentSchedule && (
-                <span className="hp-dash__action-badge">Current</span>
-              )}
-            </div>
-          ))}
-        </div>
-        {hasChanges && (
-          <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div className="hp-dash__alert hp-dash__alert--info">
-              <span className="hp-dash__alert-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
-                </svg>
-              </span>
-              <span>Changing your payout schedule will take effect from the next payout cycle.</span>
-            </div>
-            <button className="hp-dash__btn-gold" onClick={() => setShowConfirmModal(true)}>Save Changes</button>
+        <div className="hp-dash__section-header">
+          <div>
+            <span className="hp-dash__section-label">Request Payout</span>
+            <p className="hp-dash__text-muted" style={{ marginTop: 6 }}>Withdraw your available balance to your linked bank account</p>
           </div>
-        )}
+          <button className="hp-dash__btn-gold" onClick={() => setShowRequestModal(true)}>Request Payout</button>
+        </div>
       </section>
 
       {/* Bank Account */}
@@ -143,9 +142,9 @@ export function PayoutsPage() {
             </svg>
           </div>
           <div className="hp-dash__bank-details">
-            <span className="hp-dash__bank-name">{mockPayoutConfig.bankAccount.name}</span>
-            <span className="hp-dash__text-muted">{mockPayoutConfig.bankAccount.bank} •••• {mockPayoutConfig.bankAccount.lastFour}</span>
-            <span className="hp-dash__text-muted">Sort Code: {mockPayoutConfig.bankAccount.sortCode}</span>
+            <span className="hp-dash__bank-name">{bankAccount.name}</span>
+            <span className="hp-dash__text-muted">{bankAccount.bank} •••• {bankAccount.lastFour}</span>
+            <span className="hp-dash__text-muted">Sort Code: {bankAccount.sortCode}</span>
           </div>
           <span className="hp-dash__status hp-dash__status--completed" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -170,10 +169,10 @@ export function PayoutsPage() {
               </tr>
             </thead>
             <tbody>
-              {mockUpcomingPayouts.map((p) => (
+              {upcomingPayouts.map((p) => (
                 <tr key={p.id}>
                   <td className="hp-dash__txn-id">{p.id}</td>
-                  <td>{p.date}</td>
+                  <td>{formatDate(p.date)}</td>
                   <td>{formatCurrency(p.amount)}</td>
                   <td><span className={`hp-dash__status hp-dash__status--${p.status}`}>{p.status}</span></td>
                 </tr>
@@ -203,7 +202,7 @@ export function PayoutsPage() {
               {mockPayoutHistory.map((p) => (
                 <tr key={p.id}>
                   <td className="hp-dash__txn-id">{p.id}</td>
-                  <td>{p.date}</td>
+                  <td>{formatDate(p.date)}</td>
                   <td>{formatCurrency(p.amount)}</td>
                   <td><span className="hp-dash__status hp-dash__status--completed">Completed</span></td>
                 </tr>
@@ -213,32 +212,50 @@ export function PayoutsPage() {
         </div>
       </section>
 
-      {/* Confirm Modal */}
-      {showConfirmModal && (
-        <div className="hp-dash__modal-overlay" onClick={() => setShowConfirmModal(false)}>
+      {/* Request Payout Modal */}
+      {showRequestModal && (
+        <div className="hp-dash__modal-overlay" onClick={() => setShowRequestModal(false)}>
           <div className="hp-dash__modal" onClick={(e) => e.stopPropagation()}>
             <div className="hp-dash__modal-header">
-              <h3>Confirm Schedule Change</h3>
-              <button className="hp-dash__modal-close" onClick={() => setShowConfirmModal(false)}>&times;</button>
+              <h3>Request Payout</h3>
+              <button className="hp-dash__modal-close" onClick={() => setShowRequestModal(false)}>&times;</button>
             </div>
             <div className="hp-dash__modal-body">
-              <p style={{ marginBottom: 16 }}>Are you sure you want to change your payout schedule from <strong>{mockPayoutConfig.currentSchedule}</strong> to <strong>{selectedSchedule}</strong>?</p>
-              <div className="hp-dash__alert hp-dash__alert--info">
+              <p className="hp-dash__text-muted" style={{ marginBottom: 16 }}>Available balance: <strong style={{ color: 'var(--hp-gold)' }}>{formatCurrency(balance)}</strong></p>
+              <div className="hp-dash__field">
+                <label>Amount (GBP)</label>
+                <input type="number" placeholder="0.00" value={payoutAmount} onChange={(e) => setPayoutAmount(e.target.value)} />
+              </div>
+              {parsedAmount > balance && (
+                <p style={{ color: 'var(--hp-red)', fontSize: '0.8rem', marginTop: 8 }}>Amount exceeds available balance</p>
+              )}
+              <div className="hp-dash__alert hp-dash__alert--info" style={{ marginTop: 16 }}>
                 <span className="hp-dash__alert-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
                   </svg>
                 </span>
-                <span>This change will take effect from your next payout cycle.</span>
+                <span>Payouts are subject to a {escrowPeriod}-hour escrow period.</span>
               </div>
             </div>
             <div className="hp-dash__modal-footer">
-              <button className="hp-dash__modal-cancel" onClick={() => setShowConfirmModal(false)}>Cancel</button>
-              <button className="hp-dash__modal-send" onClick={handleSaveChanges} disabled={isSaving}>
-                {isSaving ? 'Saving...' : 'Confirm Change'}
+              <button className="hp-dash__modal-cancel" onClick={() => setShowRequestModal(false)}>Cancel</button>
+              <button className="hp-dash__modal-send" onClick={handleRequestPayout} disabled={isSubmitting || !isValidAmount}>
+                {isSubmitting ? 'Submitting...' : 'Submit Request'}
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Success Toast */}
+      {successToast && (
+        <div className="hp-dash__toast">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <span>{successToast}</span>
+          <button className="hp-dash__toast-close" onClick={() => setSuccessToast(null)}>&times;</button>
         </div>
       )}
     </DashboardLayout>
