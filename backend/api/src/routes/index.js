@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const healthRoutes = require('./health');
 const apiRoutes = require('./api');
+const authRoutes = require('./auth');
 const meRoutes = require('./me');
 const merchantRoutes = require('./merchant');
 const onboardingRoutes = require('./onboarding');
@@ -9,6 +10,7 @@ const onboardingRoutes = require('./onboarding');
 // Routes
 router.use(healthRoutes);
 router.use(apiRoutes);
+router.use(authRoutes);
 router.use(meRoutes);
 router.use(merchantRoutes);
 router.use(onboardingRoutes);
