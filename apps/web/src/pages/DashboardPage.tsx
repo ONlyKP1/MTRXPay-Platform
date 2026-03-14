@@ -1,43 +1,67 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
+import { StatusBadge } from '../components/common/StatusBadge';
+import { getHealth, getMe, getOnboardingStatus } from '../services/api';
+import type { HealthStatus, MeResponse, OnboardingStatus, OnboardingStep } from '../services/api';
 
 type Currency = 'GBP' | 'EUR' | 'USD' | 'AED';
 
-const currencySymbols: Record<Currency, string> = { GBP: '\u00A3', EUR: '\u20AC', USD: '$', AED: '\u062F.\u0625' };
+const currencyLocales: Record<Currency, string> = { GBP: 'en-GB', EUR: 'de-DE', USD: 'en-US', AED: 'ar-AE' };
 
-const mockBalances: Record<Currency, number> = { GBP: 124580.50, EUR: 145230.75, USD: 158420.00, AED: 582150.25 };
-const mockEscrowTotal: Record<Currency, number> = { GBP: 8700.50, EUR: 3200.00, USD: 5400.00, AED: 12500.00 };
+const mockBalances: Record<Currency, number> = { GBP: 31_842.75, EUR: 27_615.40, USD: 42_390.20, AED: 156_720.80 };
+const mockEscrowTotal: Record<Currency, number> = { GBP: 4_275.30, EUR: 1_840.60, USD: 3_120.50, AED: 8_945.00 };
 
 const mockMetrics = {
-  totalProcessed: 1245890.00,
-  currentAccount: 124580.50,
-  nextScheduledPayment: 15420.00,
-  nextPaymentDate: '2026-01-20',
-  openChargebacks: 3,
-  chargebackAmount: 2450.00,
+  totalProcessed: 284_610.45,
+  todaysRevenue: 4_960,
+  todaysCount: 7,
+  nextScheduledPayment: 8_240.00,
+  nextPaymentDate: '2026-03-18',
 };
 
+const mockRevenueData = [
+  { day: 'Mon', amount: 3_420 },
+  { day: 'Tue', amount: 5_180 },
+  { day: 'Wed', amount: 2_740 },
+  { day: 'Thu', amount: 6_310 },
+  { day: 'Fri', amount: 4_960 },
+  { day: 'Sat', amount: 1_890 },
+  { day: 'Sun', amount: 3_150 },
+];
+
+const mockKPIs = [
+  { label: 'Success Rate', value: '97.3%', variant: 'green' as const },
+  { label: 'Avg Transaction', value: '£708.60', variant: null },
+  { label: 'Chargeback Rate', value: '0.4%', variant: 'green' as const },
+  { label: 'Active Customers', value: '1,247', variant: null },
+];
+
 const mockAlerts = [
-  { id: 1, type: 'error' as const, message: 'Chargeback CB-2024-001 requires response by Jan 18, 2026' },
-  { id: 2, type: 'info' as const, message: 'Scheduled payout of \u00A315,420.00 on Jan 20, 2026' },
+  { id: 1, type: 'error' as const, message: 'Chargeback CB-2026-014 requires response by 19 Mar 2026' },
+  { id: 2, type: 'info' as const, message: 'Scheduled payout of £8,240.00 on 18 Mar 2026' },
   { id: 3, type: 'success' as const, message: 'KYC verification approved' },
 ];
 
 const mockTransactions = [
-  { id: 'TXN-4E8F21', date: '2026-01-15', amount: 1250.00, currency: 'GBP' as Currency, status: 'completed' as const, customer: 'John Smith' },
-  { id: 'TXN-7B3A94', date: '2026-01-15', amount: 890.50, currency: 'GBP' as Currency, status: 'completed' as const, customer: 'Emma Wilson' },
-  { id: 'TXN-2C9D56', date: '2026-01-14', amount: 2100.00, currency: 'EUR' as Currency, status: 'pending' as const, customer: 'Hans Mueller' },
-  { id: 'TXN-1A6E83', date: '2026-01-14', amount: 450.00, currency: 'GBP' as Currency, status: 'completed' as const, customer: 'Sarah Brown' },
-  { id: 'TXN-9F4B72', date: '2026-01-13', amount: 3200.00, currency: 'USD' as Currency, status: 'failed' as const, customer: 'Mike Johnson' },
+  { id: 'TXN-4E8F21', date: '2026-03-14', amount: 1_475.00, currency: 'GBP' as Currency, status: 'completed' as const, customer: 'John Smith' },
+  { id: 'TXN-7B3A94', date: '2026-03-13', amount: 642.80, currency: 'GBP' as Currency, status: 'completed' as const, customer: 'Emma Wilson' },
+  { id: 'TXN-2C9D56', date: '2026-03-13', amount: 1_830.50, currency: 'EUR' as Currency, status: 'pending' as const, customer: 'Hans Mueller' },
+  { id: 'TXN-1A6E83', date: '2026-03-12', amount: 385.20, currency: 'GBP' as Currency, status: 'completed' as const, customer: 'Sarah Brown' },
+  { id: 'TXN-9F4B72', date: '2026-03-11', amount: 2_750.00, currency: 'USD' as Currency, status: 'failed' as const, customer: 'Mike Johnson' },
 ];
 
 const mockMessages = [
-  { id: 1, from: 'MTRX Support', subject: 'Welcome to MTRX Pay', preview: 'Thank you for joining MTRX Pay. Your account has been...', date: '2026-01-15', read: true },
-  { id: 2, from: 'Compliance Team', subject: 'Document Request', preview: 'Please upload the following documents to complete your...', date: '2026-01-14', read: false },
-  { id: 3, from: 'MTRX Support', subject: 'Payout Schedule Update', preview: 'Your payout schedule has been updated. Next payout...', date: '2026-01-12', read: true },
+  { id: 1, from: 'MTRX Support', subject: 'Welcome to MTRX Pay', preview: 'Thank you for joining MTRX Pay. Your account has been...', date: '2026-03-14', read: true },
+  { id: 2, from: 'Compliance Team', subject: 'Document Request', preview: 'Please upload the following documents to complete your...', date: '2026-03-13', read: false },
+  { id: 3, from: 'MTRX Support', subject: 'Payout Schedule Update', preview: 'Your payout schedule has been updated. Next payout...', date: '2026-03-10', read: true },
 ];
+
+const formatDate = (iso: string) => {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+};
 
 /* ── Icons ── */
 const icons = {
@@ -76,14 +100,24 @@ const icons = {
       <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" /><rect x="9" y="3" width="6" height="4" rx="1" />
     </svg>
   ),
-  book: (
+  creditCard: (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+      <rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" />
     </svg>
   ),
   star: (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  ),
+  arrowUp: (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="6" y1="9" x2="6" y2="3" /><polyline points="3 5 6 2 9 5" />
+    </svg>
+  ),
+  arrowDown: (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="6" y1="3" x2="6" y2="9" /><polyline points="3 7 6 10 9 7" />
     </svg>
   ),
 };
@@ -94,9 +128,29 @@ export function DashboardPage() {
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>('GBP');
   const [showCompose, setShowCompose] = useState(false);
   const [newMessage, setNewMessage] = useState({ to: 'support', subject: '', body: '' });
+  const [dismissedAlerts, setDismissedAlerts] = useState<number[]>([]);
+
+  /* ── API state ── */
+  const [health, setHealth] = useState<HealthStatus | null>(null);
+  const [apiLive, setApiLive] = useState(false);
+  const [me, setMe] = useState<MeResponse | null>(null);
+  const [onboarding, setOnboarding] = useState<OnboardingStatus | null>(null);
+
+  useEffect(() => {
+    getHealth().then(r => { setHealth(r.data); setApiLive(r.live); });
+    getMe().then(r => setMe(r.data));
+    getOnboardingStatus().then(r => setOnboarding(r.data));
+  }, []);
+
+  const visibleAlerts = mockAlerts.filter(a => !dismissedAlerts.includes(a.id));
 
   const formatCurrency = (amount: number, currency: Currency = selectedCurrency) => {
-    return `${currencySymbols[currency]}${amount.toLocaleString('en-GB', { minimumFractionDigits: 2 })}`;
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
   };
 
   const handleSendMessage = () => {
@@ -114,6 +168,8 @@ export function DashboardPage() {
 
   const unreadCount = mockMessages.filter(m => !m.read).length;
   const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  const maxRevenue = Math.max(...mockRevenueData.map(d => d.amount));
 
   return (
     <DashboardLayout>
@@ -160,24 +216,111 @@ export function DashboardPage() {
         </div>
       </section>
 
+      {/* Status Row — Merchant, Onboarding, API Health */}
+      <div className="hp-dash__status-row">
+        <div className="hp-dash__status-card">
+          <span className="hp-dash__status-card-label">Merchant Status</span>
+          <div className="hp-dash__status-card-body">
+            {me ? (
+              <>
+                <span className="hp-dash__status-card-value">{me.firstName} {me.lastName}</span>
+                <span className="hp-dash__status-card-meta">{me.email}</span>
+                <span className="hp-dash__status-card-meta">Role: {me.role}</span>
+                <StatusBadge status={me.kycStatus === 'approved' ? 'approved' : 'pending'} />
+              </>
+            ) : (
+              <span className="hp-dash__status-card-meta">Loading...</span>
+            )}
+          </div>
+          {!apiLive && <span className="hp-dash__status-card-tag">Mock data</span>}
+        </div>
+
+        <div className="hp-dash__status-card">
+          <span className="hp-dash__status-card-label">Onboarding Status</span>
+          <div className="hp-dash__status-card-body">
+            {onboarding ? (
+              <>
+                <StatusBadge status={onboarding.status as OnboardingStep} />
+                <span className="hp-dash__status-card-meta">
+                  Step {onboarding.completedSteps} of {onboarding.totalSteps}
+                  {onboarding.currentStep && ` — ${onboarding.currentStep}`}
+                </span>
+                <div className="hp-dash__progress-bar-track" style={{ marginTop: 6 }}>
+                  <div
+                    className="hp-dash__progress-bar-fill"
+                    style={{ width: `${(onboarding.completedSteps / onboarding.totalSteps) * 100}%` }}
+                  />
+                </div>
+              </>
+            ) : (
+              <span className="hp-dash__status-card-meta">Loading...</span>
+            )}
+          </div>
+          {!apiLive && <span className="hp-dash__status-card-tag">Mock data</span>}
+        </div>
+
+        <div className="hp-dash__status-card">
+          <span className="hp-dash__status-card-label">API Health</span>
+          <div className="hp-dash__status-card-body">
+            {health ? (
+              <>
+                <span className={`hp-dash__health-dot hp-dash__health-dot--${health.status === 'ok' ? 'green' : health.status === 'degraded' ? 'gold' : 'red'}`} />
+                <span className="hp-dash__status-card-value">
+                  {apiLive ? 'Backend connected' : 'Using fallback data'}
+                </span>
+                <span className="hp-dash__status-card-meta">
+                  {apiLive ? 'API online' : 'API offline — showing demo data'}
+                </span>
+                {health.version && (
+                  <span className="hp-dash__status-card-meta">v{health.version}</span>
+                )}
+              </>
+            ) : (
+              <span className="hp-dash__status-card-meta">Checking...</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Revenue Chart */}
+      <section className="hp-dash__chart">
+        <span className="hp-dash__section-label">Revenue — Last 7 Days</span>
+        <div className="hp-dash__chart-bars">
+          {mockRevenueData.map((d) => (
+            <div key={d.day} className="hp-dash__chart-col">
+              <div
+                className="hp-dash__chart-bar"
+                style={{ height: `${(d.amount / maxRevenue) * 100}%` }}
+              >
+                <span className="hp-dash__chart-value">
+                  {formatCurrency(d.amount, 'GBP')}
+                </span>
+              </div>
+              <span className="hp-dash__chart-label">{d.day}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Metrics Grid */}
       <section className="hp-dash__metrics">
         <div className="hp-dash__metric-card">
           <div className="hp-dash__metric-icon">{icons.wallet}</div>
-          <span className="hp-dash__metric-label">Current Account</span>
-          <span className="hp-dash__metric-value">{formatCurrency(mockMetrics.currentAccount, selectedCurrency)}</span>
+          <span className="hp-dash__metric-label">Today's Revenue</span>
+          <span className="hp-dash__metric-value">{formatCurrency(mockMetrics.todaysRevenue, 'GBP')}</span>
+          <span className="hp-dash__trend hp-dash__trend--up">{icons.arrowUp} 12%</span>
         </div>
         <div className="hp-dash__metric-card">
           <div className="hp-dash__metric-icon">{icons.calendar}</div>
           <span className="hp-dash__metric-label">Next Payout</span>
           <span className="hp-dash__metric-value">{formatCurrency(mockMetrics.nextScheduledPayment, selectedCurrency)}</span>
-          <span className="hp-dash__metric-sub">{mockMetrics.nextPaymentDate}</span>
+          <span className="hp-dash__metric-sub">{formatDate(mockMetrics.nextPaymentDate)}</span>
         </div>
         <div className="hp-dash__metric-card">
           <div className="hp-dash__metric-icon">{icons.wallet}</div>
           <span className="hp-dash__metric-label">In Escrow</span>
           <span className="hp-dash__metric-value">{formatCurrency(mockEscrowTotal[selectedCurrency])}</span>
-          <span className="hp-dash__metric-sub">72hr hold period</span>
+          <span className="hp-dash__trend hp-dash__trend--down">{icons.arrowDown} 3%</span>
         </div>
         <div className="hp-dash__metric-card hp-dash__metric-card--action" onClick={() => navigate('/payouts')}>
           <div className="hp-dash__metric-icon">{icons.chart}</div>
@@ -187,11 +330,28 @@ export function DashboardPage() {
         </div>
       </section>
 
+      {/* KPI Row */}
+      <div className="hp-dash__kpi-row">
+        {mockKPIs.map((kpi) => (
+          <div key={kpi.label} className="hp-dash__kpi-item">
+            <span className="hp-dash__kpi-label">{kpi.label}</span>
+            <span className={`hp-dash__kpi-value${kpi.variant ? ` hp-dash__kpi-value--${kpi.variant}` : ''}`}>
+              {kpi.value}
+            </span>
+          </div>
+        ))}
+      </div>
+
       {/* Alerts */}
       <section className="hp-dash__alerts">
-        <span className="hp-dash__section-label">Alerts</span>
+        <span className="hp-dash__section-label">
+          Alerts
+          {visibleAlerts.length > 0 && (
+            <span className="hp-dash__alert-count">{visibleAlerts.length}</span>
+          )}
+        </span>
         <div className="hp-dash__alerts-list">
-          {mockAlerts.map((a) => (
+          {visibleAlerts.map((a) => (
             <div key={a.id} className={`hp-dash__alert hp-dash__alert--${a.type}`}>
               <span className="hp-dash__alert-icon">
                 {a.type === 'error' && icons.alertTriangle}
@@ -199,8 +359,18 @@ export function DashboardPage() {
                 {a.type === 'success' && icons.shield}
               </span>
               <span>{a.message}</span>
+              <button
+                className="hp-dash__dismiss-btn"
+                onClick={() => setDismissedAlerts(prev => [...prev, a.id])}
+                aria-label="Dismiss alert"
+              >
+                &times;
+              </button>
             </div>
           ))}
+          {visibleAlerts.length === 0 && (
+            <p style={{ color: 'var(--hp-text-muted)', fontSize: '0.85rem' }}>No active alerts.</p>
+          )}
         </div>
       </section>
 
@@ -218,10 +388,10 @@ export function DashboardPage() {
             <h4 className="hp-dash__action-title">Compliance Centre</h4>
             <p className="hp-dash__action-desc">Manage compliance documents and status</p>
           </div>
-          <div className="hp-dash__action-card" onClick={() => navigate('/help')}>
-            <div className="hp-dash__action-icon">{icons.book}</div>
-            <h4 className="hp-dash__action-title">Help & API</h4>
-            <p className="hp-dash__action-desc">Documentation and developer API</p>
+          <div className="hp-dash__action-card" onClick={() => navigate('/payment-types')}>
+            <div className="hp-dash__action-icon">{icons.creditCard}</div>
+            <h4 className="hp-dash__action-title">Payment Types</h4>
+            <p className="hp-dash__action-desc">Manage accepted payment methods</p>
           </div>
           <div className="hp-dash__action-card" onClick={() => navigate('/trust')}>
             <div className="hp-dash__action-icon">{icons.star}</div>
@@ -256,7 +426,7 @@ export function DashboardPage() {
               {mockTransactions.map((txn) => (
                 <tr key={txn.id}>
                   <td className="hp-dash__txn-id">{txn.id}</td>
-                  <td>{txn.date}</td>
+                  <td>{formatDate(txn.date)}</td>
                   <td>{txn.customer}</td>
                   <td>{formatCurrency(txn.amount, txn.currency)}</td>
                   <td><span className={`hp-dash__status hp-dash__status--${txn.status}`}>{txn.status}</span></td>
@@ -282,7 +452,7 @@ export function DashboardPage() {
               <div className="hp-dash__msg-body">
                 <div className="hp-dash__msg-top">
                   <span className="hp-dash__msg-from">{msg.from}</span>
-                  <span className="hp-dash__msg-date">{msg.date}</span>
+                  <span className="hp-dash__msg-date">{formatDate(msg.date)}</span>
                 </div>
                 <div className="hp-dash__msg-subject">{msg.subject}</div>
                 <div className="hp-dash__msg-preview">{msg.preview}</div>

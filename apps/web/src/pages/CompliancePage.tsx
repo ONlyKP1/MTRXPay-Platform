@@ -28,6 +28,11 @@ const complianceChecks = [
   { name: 'Website Compliance Check', status: 'complete', date: '2026-01-11' },
 ];
 
+const formatDate = (iso: string) => {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+};
+
 const statusIcons = {
   approved: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -78,6 +83,22 @@ export function CompliancePage() {
     <DashboardLayout>
       <div className="hp-dash__page-header">
         <h1 className="hp-dash__page-title">Compliance Centre</h1>
+      </div>
+
+      {/* Progress Summary */}
+      <div className="hp-dash__progress-summary">
+        <span className="hp-dash__progress-summary-text">
+          {approvedCount} of {mockDocuments.length} approved
+        </span>
+        <div className="hp-dash__progress-bar-track">
+          <div
+            className="hp-dash__progress-bar-fill"
+            style={{ width: `${(approvedCount / mockDocuments.length) * 100}%` }}
+          />
+        </div>
+        <span className="hp-dash__progress-pct">
+          {Math.round((approvedCount / mockDocuments.length) * 100)}%
+        </span>
       </div>
 
       {/* Status Overview */}
@@ -142,8 +163,8 @@ export function CompliancePage() {
                 <div className="hp-dash__doc-info">
                   <h4 className="hp-dash__doc-name">{doc.name}</h4>
                   <span className="hp-dash__doc-type">{doc.type}</span>
-                  {doc.uploadedAt && <span className="hp-dash__text-muted">Uploaded: {doc.uploadedAt}</span>}
-                  {doc.expiresAt && <span className="hp-dash__text-muted">Expires: {doc.expiresAt}</span>}
+                  {doc.uploadedAt && <span className="hp-dash__text-muted">Uploaded: {formatDate(doc.uploadedAt)}</span>}
+                  {doc.expiresAt && <span className="hp-dash__text-muted">Expires: {formatDate(doc.expiresAt)}</span>}
                   {doc.notes && <p className="hp-dash__doc-notes">{doc.notes}</p>}
                 </div>
                 <span className={`hp-dash__status hp-dash__status--${getStatusClass(doc.status)}`}>
@@ -173,7 +194,7 @@ export function CompliancePage() {
                 </span>
                 <div className="hp-dash__check-info">
                   <h4>{check.name}</h4>
-                  {check.date && <span className="hp-dash__text-muted">Completed: {check.date}</span>}
+                  {check.date && <span className="hp-dash__text-muted">Completed: {formatDate(check.date)}</span>}
                   {check.status === 'action_required' && <span className="hp-dash__text-red">Action required - Please upload missing documents</span>}
                   {check.status === 'pending' && <span className="hp-dash__text-gold">Under review</span>}
                 </div>

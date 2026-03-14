@@ -18,18 +18,25 @@ interface Transaction {
   reference: string;
 }
 
+const currencyLocales: Record<Currency, string> = { GBP: 'en-GB', EUR: 'de-DE', USD: 'en-US', AED: 'ar-AE' };
+
 const mockTransactions: Transaction[] = [
-  { id: 'TXN-001', date: '2026-01-15', time: '14:32', amount: 1250.00, currency: 'GBP', status: 'completed', type: 'payment', customer: 'John Smith', email: 'john@example.com', reference: 'ORD-2024-001' },
-  { id: 'TXN-002', date: '2026-01-15', time: '12:15', amount: 890.50, currency: 'GBP', status: 'completed', type: 'payment', customer: 'Emma Wilson', email: 'emma@example.com', reference: 'ORD-2024-002' },
-  { id: 'TXN-003', date: '2026-01-14', time: '16:45', amount: 2100.00, currency: 'EUR', status: 'pending', type: 'payment', customer: 'Hans Mueller', email: 'hans@example.de', reference: 'ORD-2024-003' },
-  { id: 'TXN-004', date: '2026-01-14', time: '11:20', amount: 450.00, currency: 'GBP', status: 'completed', type: 'payment', customer: 'Sarah Brown', email: 'sarah@example.com', reference: 'ORD-2024-004' },
-  { id: 'TXN-005', date: '2026-01-13', time: '09:55', amount: 3200.00, currency: 'USD', status: 'completed', type: 'payment', customer: 'Mike Johnson', email: 'mike@example.com', reference: 'ORD-2024-005' },
-  { id: 'TXN-006', date: '2026-01-13', time: '08:30', amount: 15420.00, currency: 'GBP', status: 'completed', type: 'payout', customer: 'MTRX Payout', email: '-', reference: 'PAY-2024-001' },
-  { id: 'TXN-007', date: '2026-01-12', time: '15:10', amount: 175.00, currency: 'GBP', status: 'refunded', type: 'refund', customer: 'Alice Cooper', email: 'alice@example.com', reference: 'REF-2024-001' },
-  { id: 'TXN-008', date: '2026-01-12', time: '10:00', amount: 520.00, currency: 'EUR', status: 'failed', type: 'payment', customer: 'Pierre Dubois', email: 'pierre@example.fr', reference: 'ORD-2024-006' },
-  { id: 'TXN-009', date: '2026-01-11', time: '17:25', amount: 1850.00, currency: 'GBP', status: 'completed', type: 'payment', customer: 'David Lee', email: 'david@example.com', reference: 'ORD-2024-007' },
-  { id: 'TXN-010', date: '2026-01-11', time: '14:00', amount: 2450.00, currency: 'GBP', status: 'completed', type: 'chargeback', customer: 'Disputed', email: '-', reference: 'CB-2024-001' },
+  { id: 'TXN-001', date: '2026-03-14', time: '14:32', amount: 1_475.00, currency: 'GBP', status: 'completed', type: 'payment', customer: 'John Smith', email: 'j.smith@acme.co.uk', reference: 'ORD-2026-001' },
+  { id: 'TXN-002', date: '2026-03-14', time: '12:15', amount: 890.50, currency: 'GBP', status: 'completed', type: 'payment', customer: 'Emma Wilson', email: 'emma.w@barlow.io', reference: 'ORD-2026-002' },
+  { id: 'TXN-003', date: '2026-03-13', time: '16:45', amount: 2_100.00, currency: 'EUR', status: 'pending', type: 'payment', customer: 'Hans Mueller', email: 'h.mueller@dach.de', reference: 'ORD-2026-003' },
+  { id: 'TXN-004', date: '2026-03-13', time: '11:20', amount: 450.00, currency: 'GBP', status: 'completed', type: 'payment', customer: 'Sarah Brown', email: 's.brown@redfern.com', reference: 'ORD-2026-004' },
+  { id: 'TXN-005', date: '2026-03-12', time: '09:55', amount: 3_200.00, currency: 'USD', status: 'completed', type: 'payment', customer: 'Mike Johnson', email: 'mike.j@usfirm.com', reference: 'ORD-2026-005' },
+  { id: 'TXN-006', date: '2026-03-11', time: '08:30', amount: 15_420.00, currency: 'GBP', status: 'completed', type: 'payout', customer: 'MTRX Payout', email: '-', reference: 'PAY-2026-001' },
+  { id: 'TXN-007', date: '2026-03-10', time: '15:10', amount: 175.00, currency: 'GBP', status: 'refunded', type: 'refund', customer: 'Alice Cooper', email: 'alice.c@inbox.co.uk', reference: 'REF-2026-001' },
+  { id: 'TXN-008', date: '2026-03-10', time: '10:00', amount: 520.00, currency: 'EUR', status: 'failed', type: 'payment', customer: 'Pierre Dubois', email: 'pierre@dubois.fr', reference: 'ORD-2026-006' },
+  { id: 'TXN-009', date: '2026-03-09', time: '17:25', amount: 1_850.00, currency: 'GBP', status: 'completed', type: 'payment', customer: 'David Lee', email: 'd.lee@summit.co.uk', reference: 'ORD-2026-007' },
+  { id: 'TXN-010', date: '2026-03-08', time: '14:00', amount: 2_450.00, currency: 'GBP', status: 'completed', type: 'chargeback', customer: 'Disputed', email: '-', reference: 'CB-2026-001' },
 ];
+
+const formatDate = (iso: string) => {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+};
 
 export function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,8 +46,12 @@ export function TransactionsPage() {
   const [dateTo, setDateTo] = useState('');
 
   const formatCurrency = (amount: number, currency: Currency) => {
-    const symbols: Record<Currency, string> = { GBP: '£', EUR: '€', USD: '$', AED: 'د.إ' };
-    return `${symbols[currency]}${amount.toLocaleString('en-GB', { minimumFractionDigits: 2 })}`;
+    return new Intl.NumberFormat(currencyLocales[currency], {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
   };
 
   const filteredTransactions = mockTransactions.filter(txn => {
@@ -145,7 +156,7 @@ export function TransactionsPage() {
                 <tr key={txn.id}>
                   <td className="hp-dash__txn-id">{txn.id}</td>
                   <td>
-                    <div>{txn.date}</div>
+                    <div>{formatDate(txn.date)}</div>
                     <div className="hp-dash__text-muted">{txn.time}</div>
                   </td>
                   <td>
@@ -166,6 +177,11 @@ export function TransactionsPage() {
         {filteredTransactions.length === 0 && (
           <div className="hp-dash__empty">
             <p>No transactions found matching your filters.</p>
+          </div>
+        )}
+        {filteredTransactions.length > 0 && (
+          <div className="hp-dash__pagination">
+            Showing 1–{filteredTransactions.length} of {mockTransactions.length} transactions
           </div>
         )}
       </section>
