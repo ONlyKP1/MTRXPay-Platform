@@ -14495,9 +14495,9 @@ select.form-input {
 /* ── Fixed action bar — search + bell ── */
 .hp-dash__actions-bar {
   position: fixed;
-  top: 40px;
+  top: 28px;
   right: 48px;
-  z-index: 95;
+  z-index: 110;
   display: flex;
   align-items: center;
   gap: 12px;
