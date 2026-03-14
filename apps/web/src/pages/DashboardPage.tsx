@@ -17,8 +17,6 @@ const mockEscrowTotal: Record<Currency, number> = { GBP: 4_275.30, EUR: 1_840.60
 
 const mockMetrics = {
   totalProcessed: 284_610.45,
-  todaysRevenue: 4_960,
-  todaysCount: 7,
   nextScheduledPayment: 8_240.00,
   nextPaymentDate: '2026-03-18',
 };
@@ -41,6 +39,7 @@ function generateRevenueData(days: number) {
 }
 
 const allRevenueData = generateRevenueData(90);
+const todaysRevenue = allRevenueData[allRevenueData.length - 1].amount;
 
 const dateRangeOptions: { value: DateRange; label: string }[] = [
   { value: '1d', label: 'Today' },
@@ -333,7 +332,7 @@ export function DashboardPage() {
         <div className="hp-dash__metric-card">
           <div className="hp-dash__metric-icon">{icons.wallet}</div>
           <span className="hp-dash__metric-label">Today's Revenue</span>
-          <span className="hp-dash__metric-value">{formatCurrency(mockMetrics.todaysRevenue, 'GBP')}</span>
+          <span className="hp-dash__metric-value">{formatCurrency(todaysRevenue, 'GBP')}</span>
           <span className="hp-dash__trend hp-dash__trend--up">{icons.arrowUp} 12%</span>
         </div>
         <div className="hp-dash__metric-card">
