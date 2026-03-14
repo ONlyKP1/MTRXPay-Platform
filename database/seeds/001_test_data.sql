@@ -1,5 +1,6 @@
 -- Seed data for local development
 -- Run after migrations
+-- Test password for all users: password123
 
 -- 1. Create test merchant
 INSERT INTO merchants (id, business_name, trading_name, status)
@@ -10,23 +11,23 @@ VALUES (
   'active'
 ) ON CONFLICT (id) DO NOTHING;
 
--- 2. Create admin user
+-- 2. Create admin user (password: password123)
 INSERT INTO users (id, full_name, email, password_hash, role)
 VALUES (
   '22222222-2222-2222-2222-222222222222',
   'Admin User',
   'admin@mtrxpay.com',
-  '$2b$10$test_hash_replace_in_production',
+  '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW',
   'admin'
 ) ON CONFLICT (id) DO NOTHING;
 
--- 3. Create merchant user
+-- 3. Create merchant user (password: password123)
 INSERT INTO users (id, full_name, email, password_hash, role, merchant_id)
 VALUES (
   '33333333-3333-3333-3333-333333333333',
   'Merchant User',
   'merchant@testcompany.com',
-  '$2b$10$test_hash_replace_in_production',
+  '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW',
   'merchant',
   '11111111-1111-1111-1111-111111111111'
 ) ON CONFLICT (id) DO NOTHING;
