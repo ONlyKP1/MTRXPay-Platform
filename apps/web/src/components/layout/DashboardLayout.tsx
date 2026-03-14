@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { GlobalSearch } from '../dashboard/GlobalSearch';
@@ -172,14 +173,17 @@ export function DashboardLayout({ children, unreadCount = 0 }: DashboardLayoutPr
         </div>
       </main>
 
-      {/* Fixed action group — search + notifications */}
-      <div className="hp-dash__actions-bar">
-        <GlobalSearch onNavigate={navigate} />
-        <button className="hp-dash__bell" onClick={handleNotifications} aria-label="Notifications">
-          {bellIcon}
-          {unreadCount > 0 && <span className="hp-dash__bell-dot" />}
-        </button>
-      </div>
+      {/* Fixed action group — portalled to body so backdrop-filter can't break fixed positioning */}
+      {createPortal(
+        <div className="hp-dash__actions-bar">
+          <GlobalSearch onNavigate={navigate} />
+          <button className="hp-dash__bell" onClick={handleNotifications} aria-label="Notifications">
+            {bellIcon}
+            {unreadCount > 0 && <span className="hp-dash__bell-dot" />}
+          </button>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
