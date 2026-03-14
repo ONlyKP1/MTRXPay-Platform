@@ -12042,7 +12042,9 @@ select.form-input {
   --hp-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
   background: var(--hp-bg);
   color: var(--hp-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
@@ -12064,8 +12066,6 @@ select.form-input {
   justify-content: space-between;
   z-index: 100;
   overflow-y: auto;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
 }
 .hp-dash__sidebar-top {
   padding: 28px 20px 20px;
@@ -12202,7 +12202,7 @@ select.form-input {
 .hp-dash__main {
   margin-left: var(--hp-sidebar-w);
   flex: 1;
-  min-height: 100vh;
+  height: 100vh;
   overflow-y: auto;
   position: relative;
 }
@@ -12261,32 +12261,39 @@ select.form-input {
 }
 .hp-dash__bell {
   position: relative;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid transparent;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  background: linear-gradient(135deg, var(--hp-gold), #b8943f);
+  border: none;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--hp-text);
+  color: #0C1018;
   cursor: pointer;
   transition: all var(--hp-transition);
+  box-shadow: 0 2px 12px rgba(197, 164, 78, 0.3);
+}
+.hp-dash__bell svg {
+  stroke: #0C1018;
 }
 .hp-dash__bell:hover {
-  border-color: var(--hp-gold);
-  color: var(--hp-gold);
-  background: rgba(197, 164, 78, 0.12);
+  background: linear-gradient(135deg, var(--hp-gold-light), var(--hp-gold));
+  box-shadow: 0 4px 20px rgba(197, 164, 78, 0.45);
+  transform: translateY(-1px);
+}
+.hp-dash__bell:active {
+  transform: translateY(0);
 }
 .hp-dash__bell-dot {
   position: absolute;
-  top: 7px;
-  right: 7px;
-  width: 8px;
-  height: 8px;
+  top: 6px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
   background: var(--hp-red);
   border-radius: 50%;
-  border: 2px solid var(--hp-bg-card);
+  border: 2px solid var(--hp-gold);
   animation: hp-dash-pulse 2s infinite;
 }
 
@@ -14498,45 +14505,47 @@ select.form-input {
 
 /* ── Fixed action bar — search + bell ── */
 .hp-dash__actions-bar {
-  position: fixed;
-  top: 28px;
-  right: 48px;
+  position: absolute;
+  top: 24px;
+  right: 40px;
   z-index: 110;
   display: flex;
   align-items: center;
-  gap: 14px;
-  background: rgba(12, 16, 24, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--hp-gold);
-  border-radius: 60px;
-  padding: 6px 8px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(197, 164, 78, 0.12);
+  gap: 10px;
 }
 
 /* ── Search trigger ── */
 .hp-dash__search-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 18px;
-  border-radius: 50px;
-  border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--hp-text);
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, var(--hp-gold), #b8943f);
+  color: #0C1018;
   font-size: 0.82rem;
+  font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: all var(--hp-transition);
+  box-shadow: 0 2px 12px rgba(197, 164, 78, 0.3);
+}
+.hp-dash__search-trigger svg {
+  stroke: #0C1018;
 }
 .hp-dash__search-trigger:hover {
-  border-color: var(--hp-gold);
-  color: var(--hp-gold);
-  background: rgba(197, 164, 78, 0.12);
+  background: linear-gradient(135deg, var(--hp-gold-light), var(--hp-gold));
+  box-shadow: 0 4px 20px rgba(197, 164, 78, 0.45);
+  transform: translateY(-1px);
+}
+.hp-dash__search-trigger:active {
+  transform: translateY(0);
 }
 .hp-dash__search-trigger-text {
-  font-weight: 500;
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 /* ── Kbd badge ── */
@@ -14544,15 +14553,20 @@ select.form-input {
   display: inline-flex;
   align-items: center;
   padding: 2px 7px;
-  border-radius: 6px;
-  background: rgba(197, 164, 78, 0.1);
-  border: 1px solid var(--hp-gold-border);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   font-size: 0.6rem;
   font-weight: 700;
   font-family: inherit;
-  color: var(--hp-gold);
   color: var(--hp-text-muted);
   line-height: 1.4;
+}
+/* Dark badge variant inside gold buttons */
+.hp-dash__search-trigger .hp-dash__search-kbd {
+  background: rgba(12, 16, 24, 0.2);
+  border-color: rgba(12, 16, 24, 0.15);
+  color: rgba(12, 16, 24, 0.6);
 }
 
 /* ── Overlay — above sidebar (z-index 100) ── */
@@ -14573,25 +14587,25 @@ select.form-input {
 /* ── Panel (matches modal card pattern) ── */
 .hp-dash__search-panel {
   width: 100%;
-  max-width: 540px;
+  max-width: 560px;
   margin: 0 20px;
   background: var(--hp-bg-card);
-  border: 1px solid var(--hp-border-light);
-  border-radius: var(--hp-radius);
-  box-shadow: var(--hp-shadow-lg), 0 0 80px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--hp-gold-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(197, 164, 78, 0.06);
   overflow: hidden;
   position: relative;
   animation: hp-dash-slideUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-/* Gold top accent — same as modal */
+/* Gold top accent */
 .hp-dash__search-panel::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--hp-gold), var(--hp-gold-light), var(--hp-gold));
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--hp-gold), var(--hp-gold-light), var(--hp-gold), transparent);
 }
 
 /* ── Input row ── */
@@ -14599,18 +14613,19 @@ select.form-input {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 18px 22px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--hp-border);
-  color: var(--hp-text-muted);
+  color: var(--hp-gold);
 }
 .hp-dash__search-panel-input {
   flex: 1;
   background: transparent;
   border: none;
   outline: none;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-family: inherit;
   color: var(--hp-text);
+  font-weight: 400;
 }
 .hp-dash__search-panel-input::placeholder {
   color: rgba(132, 148, 176, 0.5);
@@ -14668,11 +14683,11 @@ select.form-input {
   flex-wrap: wrap;
 }
 .hp-dash__search-hint-tag {
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--hp-border);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--hp-text-muted);
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--hp-gold-border);
+  background: var(--hp-gold-dim);
+  color: var(--hp-gold);
   font-size: 0.78rem;
   font-weight: 500;
   font-family: inherit;
@@ -14680,9 +14695,10 @@ select.form-input {
   transition: all var(--hp-transition);
 }
 .hp-dash__search-hint-tag:hover {
-  border-color: var(--hp-gold-border);
-  color: var(--hp-gold);
-  background: var(--hp-gold-dim);
+  border-color: var(--hp-gold);
+  color: var(--hp-gold-light);
+  background: rgba(197, 164, 78, 0.18);
+  box-shadow: 0 0 12px rgba(197, 164, 78, 0.15);
 }
 
 /* ── Result row ── */
@@ -14773,11 +14789,12 @@ select.form-input {
 .hp-dash__search-footer {
   display: flex;
   gap: 16px;
-  padding: 10px 22px;
+  padding: 12px 24px;
   border-top: 1px solid var(--hp-border);
   font-size: 0.65rem;
   color: var(--hp-text-muted);
   letter-spacing: 0.02em;
+  background: rgba(0, 0, 0, 0.15);
 }
 .hp-dash__search-footer span {
   display: inline-flex;
@@ -14804,7 +14821,6 @@ select.form-input {
     top: 14px;
     right: 14px;
     gap: 8px;
-    padding: 4px 6px;
   }
   .hp-dash__search-trigger {
     padding: 8px 12px;
