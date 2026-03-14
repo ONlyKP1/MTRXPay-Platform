@@ -26,6 +26,7 @@ import { CompliancePage } from './pages/CompliancePage';
 import { HelpPage } from './pages/HelpPage';
 import { TrustLevelPage } from './pages/TrustLevelPage';
 import { MtrxWelcomePage } from './pages/MtrxWelcomePage';
+import { PaymentTypesPage } from './pages/PaymentTypesPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -136,6 +137,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <SubscriptionManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payment-types"
+        element={
+          <ProtectedRoute>
+            <PaymentTypesPage />
           </ProtectedRoute>
         }
       />
