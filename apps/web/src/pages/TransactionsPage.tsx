@@ -61,7 +61,9 @@ export function TransactionsPage() {
       txn.reference.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || txn.status === statusFilter;
     const matchesType = typeFilter === 'all' || txn.type === typeFilter;
-    return matchesSearch && matchesStatus && matchesType;
+    const matchesDateFrom = !dateFrom || txn.date >= dateFrom;
+    const matchesDateTo = !dateTo || txn.date <= dateTo;
+    return matchesSearch && matchesStatus && matchesType && matchesDateFrom && matchesDateTo;
   });
 
   const totalAmount = filteredTransactions
@@ -134,6 +136,14 @@ export function TransactionsPage() {
             <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
           </div>
           <button className="hp-dash__btn-outline">Export CSV</button>
+          {(searchTerm || statusFilter !== 'all' || typeFilter !== 'all' || dateFrom || dateTo) && (
+            <button
+              className="hp-dash__btn-outline hp-dash__btn-outline--clear"
+              onClick={() => { setSearchTerm(''); setStatusFilter('all'); setTypeFilter('all'); setDateFrom(''); setDateTo(''); }}
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       </section>
 

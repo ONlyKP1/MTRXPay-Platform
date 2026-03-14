@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { StatusBadge } from '../components/common/StatusBadge';
-import { getHealth, getMe, getOnboardingStatus } from '../services/api';
-import type { HealthStatus, MeResponse, OnboardingStatus, OnboardingStep } from '../services/api';
+import { RevenueChart } from '../components/dashboard/RevenueChart';
+import { useHealth, useMe, useOnboardingStatus } from '../hooks/useApiQueries';
+import type { OnboardingStep } from '../services/api';
 
 type Currency = 'GBP' | 'EUR' | 'USD' | 'AED';
+type DateRange = '1d' | '7d' | '30d' | '90d';
 
 const currencyLocales: Record<Currency, string> = { GBP: 'en-GB', EUR: 'de-DE', USD: 'en-US', AED: 'ar-AE' };
 
@@ -21,14 +23,30 @@ const mockMetrics = {
   nextPaymentDate: '2026-03-18',
 };
 
-const mockRevenueData = [
-  { day: 'Mon', amount: 3_420 },
-  { day: 'Tue', amount: 5_180 },
-  { day: 'Wed', amount: 2_740 },
-  { day: 'Thu', amount: 6_310 },
-  { day: 'Fri', amount: 4_960 },
-  { day: 'Sat', amount: 1_890 },
-  { day: 'Sun', amount: 3_150 },
+/* ── Generate 90 days of deterministic mock revenue ── */
+function generateRevenueData(days: number) {
+  const data: { label: string; amount: number; date: string }[] = [];
+  const today = new Date('2026-03-14');
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    // Deterministic pseudo-random based on day-of-year
+    const seed = d.getFullYear() * 1000 + d.getMonth() * 31 + d.getDate();
+    const amount = 1200 + ((seed * 7919) % 5800);
+    const dayName = d.toLocaleDateString('en-GB', { weekday: 'short' });
+    const dateLabel = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    data.push({ label: days <= 7 ? dayName : dateLabel, amount, date: d.toISOString().slice(0, 10) });
+  }
+  return data;
+}
+
+const allRevenueData = generateRevenueData(90);
+
+const dateRangeOptions: { value: DateRange; label: string }[] = [
+  { value: '1d', label: 'Today' },
+  { value: '7d', label: '7d' },
+  { value: '30d', label: '30d' },
+  { value: '90d', label: '90d' },
 ];
 
 const mockKPIs = [
@@ -129,20 +147,30 @@ export function DashboardPage() {
   const [showCompose, setShowCompose] = useState(false);
   const [newMessage, setNewMessage] = useState({ to: 'support', subject: '', body: '' });
   const [dismissedAlerts, setDismissedAlerts] = useState<number[]>([]);
+  const [dateRange, setDateRange] = useState<DateRange>('7d');
 
-  /* ── API state ── */
-  const [health, setHealth] = useState<HealthStatus | null>(null);
-  const [apiLive, setApiLive] = useState(false);
-  const [me, setMe] = useState<MeResponse | null>(null);
-  const [onboarding, setOnboarding] = useState<OnboardingStatus | null>(null);
+  /* ── React Query API calls ── */
+  const { data: healthResult } = useHealth();
+  const { data: meResult } = useMe();
+  const { data: onboardingResult } = useOnboardingStatus();
 
-  useEffect(() => {
-    getHealth().then(r => { setHealth(r.data); setApiLive(r.live); });
-    getMe().then(r => setMe(r.data));
-    getOnboardingStatus().then(r => setOnboarding(r.data));
-  }, []);
+  const health = healthResult?.data ?? null;
+  const apiLive = healthResult?.live ?? false;
+  const me = meResult?.data ?? null;
+  const onboarding = onboardingResult?.data ?? null;
 
   const visibleAlerts = mockAlerts.filter(a => !dismissedAlerts.includes(a.id));
+
+  /* ── Revenue data sliced by date range ── */
+  const chartData = useMemo(() => {
+    const daysMap: Record<DateRange, number> = { '1d': 1, '7d': 7, '30d': 30, '90d': 90 };
+    const days = daysMap[dateRange];
+    const sliced = allRevenueData.slice(-days);
+    // For 7d, use day names; for 1d just show "Today"
+    if (dateRange === '1d') return sliced.map(d => ({ ...d, label: 'Today' }));
+    if (dateRange === '7d') return sliced;
+    return sliced;
+  }, [dateRange]);
 
   const formatCurrency = (amount: number, currency: Currency = selectedCurrency) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
@@ -167,22 +195,18 @@ export function DashboardPage() {
   };
 
   const unreadCount = mockMessages.filter(m => !m.read).length;
-  const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
-  const maxRevenue = Math.max(...mockRevenueData.map(d => d.amount));
+  const now = new Date();
+  const today = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <DashboardLayout>
+    <DashboardLayout unreadCount={unreadCount}>
       {/* Header */}
       <header className="hp-dash__header">
         <div>
           <h1 className="hp-dash__welcome">{getGreeting()}, {user?.firstName}</h1>
-          <p className="hp-dash__date">{today}</p>
+          <p className="hp-dash__date">{today} &middot; {time}</p>
         </div>
-        <button className="hp-dash__bell" aria-label="Notifications">
-          {icons.bell}
-          {unreadCount > 0 && <span className="hp-dash__bell-dot" />}
-        </button>
       </header>
 
       {/* Balance Card */}
@@ -284,22 +308,24 @@ export function DashboardPage() {
 
       {/* Revenue Chart */}
       <section className="hp-dash__chart">
-        <span className="hp-dash__section-label">Revenue — Last 7 Days</span>
-        <div className="hp-dash__chart-bars">
-          {mockRevenueData.map((d) => (
-            <div key={d.day} className="hp-dash__chart-col">
-              <div
-                className="hp-dash__chart-bar"
-                style={{ height: `${(d.amount / maxRevenue) * 100}%` }}
+        <div className="hp-dash__chart-header">
+          <span className="hp-dash__section-label">Revenue</span>
+          <div className="hp-dash__range-selector">
+            {dateRangeOptions.map((opt) => (
+              <button
+                key={opt.value}
+                className={`hp-dash__range-btn${dateRange === opt.value ? ' hp-dash__range-btn--active' : ''}`}
+                onClick={() => setDateRange(opt.value)}
               >
-                <span className="hp-dash__chart-value">
-                  {formatCurrency(d.amount, 'GBP')}
-                </span>
-              </div>
-              <span className="hp-dash__chart-label">{d.day}</span>
-            </div>
-          ))}
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
+        <RevenueChart
+          data={chartData}
+          formatCurrency={(amount) => formatCurrency(amount, 'GBP')}
+        />
       </section>
 
       {/* Metrics Grid */}
@@ -438,7 +464,7 @@ export function DashboardPage() {
       </section>
 
       {/* Inbox */}
-      <section className="hp-dash__inbox">
+      <section className="hp-dash__inbox" id="dashboard-inbox">
         <div className="hp-dash__section-header">
           <span className="hp-dash__section-label">
             Inbox{unreadCount > 0 && <span className="hp-dash__unread-count">{unreadCount}</span>}

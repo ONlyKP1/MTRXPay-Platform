@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { GlobalSearch } from '../dashboard/GlobalSearch';
 
 /* ── Inline SVG Icons ── */
 const icons = {
@@ -73,11 +74,18 @@ const navItems = [
   { label: 'Help', icon: icons.help, to: '/help' },
 ];
 
+const bellIcon = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
+  </svg>
+);
+
 interface DashboardLayoutProps {
   children: ReactNode;
+  unreadCount?: number;
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({ children, unreadCount = 0 }: DashboardLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -88,17 +96,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     navigate('/login');
   };
 
-  const getKycBadge = () => {
-    switch (user?.kycStatus) {
-      case 'approved':
-        return <span className="hp-dash__kyc-badge hp-dash__kyc-badge--verified">Verified</span>;
-      case 'pending':
-        return <span className="hp-dash__kyc-badge hp-dash__kyc-badge--pending">Pending</span>;
-      case 'rejected':
-        return <span className="hp-dash__kyc-badge hp-dash__kyc-badge--rejected">Rejected</span>;
-      default:
-        return <span className="hp-dash__kyc-badge">Not Started</span>;
+  const handleNotifications = () => {
+    if (location.pathname !== '/dashboard') {
+      navigate('/dashboard');
     }
+    // Scroll to inbox after a tick so navigation settles
+    setTimeout(() => {
+      document.getElementById('dashboard-inbox')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   return (
@@ -140,7 +145,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <span className="hp-dash__user-name">{user?.firstName} {user?.lastName}</span>
               <span className="hp-dash__user-email">{user?.email}</span>
             </div>
-            {/* KYC badge removed */}
           </div>
           <button className="hp-dash__sign-out" onClick={handleLogout}>
             {icons.signOut}
@@ -167,6 +171,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           {children}
         </div>
       </main>
+
+      {/* Fixed action group — search + notifications */}
+      <div className="hp-dash__actions-bar">
+        <GlobalSearch onNavigate={navigate} />
+        <button className="hp-dash__bell" onClick={handleNotifications} aria-label="Notifications">
+          {bellIcon}
+          {unreadCount > 0 && <span className="hp-dash__bell-dot" />}
+        </button>
+      </div>
     </div>
   );
 }
