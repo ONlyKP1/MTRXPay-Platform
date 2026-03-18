@@ -11,6 +11,7 @@ const merchantModule = require('../modules/merchant');
 const onboardingModule = require('../modules/onboarding');
 const documentsModule = require('../modules/documents');
 const adminModule = require('../modules/admin');
+const kycModule = require('../modules/kyc');
 
 // Health check
 router.use(healthRoutes);
@@ -22,5 +23,6 @@ router.use(merchantModule.routes);
 router.use(onboardingModule.routes);
 router.use(documentsModule.routes);
 router.use(adminModule.routes);
+router.use(kycModule.routes);
 
 module.exports = router;
