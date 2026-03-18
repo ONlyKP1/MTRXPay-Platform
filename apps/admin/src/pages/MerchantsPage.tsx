@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Badge } from '@mtrx/ui';
 
 interface Merchant {
@@ -39,6 +40,7 @@ const trustColor = (score: number) =>
   score >= 50 ? 'admin-trust--mid' : 'admin-trust--low';
 
 export function MerchantsPage() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const filtered = mockMerchants.filter(m =>
     m.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -82,7 +84,7 @@ export function MerchantsPage() {
             </thead>
             <tbody>
               {filtered.map(m => (
-                <tr key={m.id} className="mtrx-table__row--clickable">
+                <tr key={m.id} className="mtrx-table__row--clickable" onClick={() => navigate(`/merchants/${m.id}`)}>
                   <td className="admin-mono">{m.id}</td>
                   <td><strong>{m.name}</strong></td>
                   <td>{m.industry}</td>

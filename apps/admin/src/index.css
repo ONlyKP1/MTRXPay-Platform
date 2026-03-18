@@ -1145,3 +1145,35 @@ a:hover { color: var(--hp-gold-light); }
   border-radius: 50%;
   animation: mtrx-spin 0.6s linear infinite;
 }
+
+/* ============================================================
+   MERCHANT DETAIL
+   ============================================================ */
+
+.admin-detail-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hp-border);
+  font-size: 0.82rem;
+  gap: 16px;
+}
+
+.admin-detail-row:last-child { border-bottom: none; }
+
+.admin-detail-row > span:first-child {
+  color: var(--hp-text-muted);
+  white-space: nowrap;
+}
+
+.admin-detail-row > span:last-child,
+.admin-detail-row > strong {
+  color: var(--hp-text);
+  text-align: right;
+}
