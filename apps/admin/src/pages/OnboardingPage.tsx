@@ -170,15 +170,17 @@ export function OnboardingPage() {
                 </div>
                 <div className="hp-auth__field">
                   <label>Nationality</label>
-                  <select name="directorNationality" value={form.directorNationality} onChange={handleChange} className="hp-auth__select">
-                    <option value="">Select...</option>
-                    <option value="GB">British</option>
-                    <option value="US">American</option>
-                    <option value="DE">German</option>
-                    <option value="FR">French</option>
-                    <option value="AE">Emirati</option>
-                    <option value="other">Other</option>
-                  </select>
+                  <input name="directorNationality" value={form.directorNationality} onChange={handleChange} placeholder="e.g. British" list="nationality-list" />
+                  <datalist id="nationality-list">
+                    <option value="British" /><option value="American" /><option value="Canadian" /><option value="Australian" />
+                    <option value="Irish" /><option value="German" /><option value="French" /><option value="Spanish" />
+                    <option value="Italian" /><option value="Dutch" /><option value="Portuguese" /><option value="Swiss" />
+                    <option value="Austrian" /><option value="Swedish" /><option value="Norwegian" /><option value="Danish" />
+                    <option value="Finnish" /><option value="Polish" /><option value="Maltese" /><option value="Cypriot" />
+                    <option value="Emirati" /><option value="Saudi" /><option value="Indian" /><option value="South African" />
+                    <option value="Nigerian" /><option value="Brazilian" /><option value="Mexican" /><option value="Japanese" />
+                    <option value="South Korean" /><option value="Singaporean" /><option value="Chinese" /><option value="New Zealander" />
+                  </datalist>
                 </div>
               </FormRow>
 
