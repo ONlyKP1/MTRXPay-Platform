@@ -24,3 +24,9 @@ export type { ErrorStateProps } from './components/ErrorState';
 
 export { EmptyState } from './components/EmptyState';
 export type { EmptyStateProps } from './components/EmptyState';
+
+export { ProgressStepper } from './components/ProgressStepper';
+export type { ProgressStepperProps, Step } from './components/ProgressStepper';
+
+export { FormSection, FormRow, FormActions } from './components/FormLayout';
+export type { FormSectionProps, FormRowProps, FormActionsProps } from './components/FormLayout';

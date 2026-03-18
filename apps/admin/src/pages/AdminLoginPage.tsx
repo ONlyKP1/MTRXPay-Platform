@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAdminAuth } from '../context/AdminAuthContext';
 
 export function AdminLoginPage() {
@@ -107,6 +108,10 @@ export function AdminLoginPage() {
               )}
             </button>
           </form>
+
+          <p className="hp-auth__footer">
+            Need an account? <Link to="/signup">Request access</Link>
+          </p>
 
           <div className="hp-auth__demo">
             <span>Demo credentials</span>

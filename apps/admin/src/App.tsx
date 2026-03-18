@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { AdminLoginPage } from './pages/AdminLoginPage';
+import { AdminSignupPage } from './pages/AdminSignupPage';
+import { OnboardingPage } from './pages/OnboardingPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ApplicationsPage } from './pages/ApplicationsPage';
 import { MerchantsPage } from './pages/MerchantsPage';
@@ -51,6 +53,8 @@ function AppRoutes() {
           !isLoading && isAuthenticated ? <Navigate to="/" replace /> : <AdminLoginPage />
         }
       />
+      <Route path="/signup" element={<AdminSignupPage />} />
+      <Route path="/onboarding" element={<OnboardingPage />} />
       <Route
         element={
           <ProtectedRoute>
