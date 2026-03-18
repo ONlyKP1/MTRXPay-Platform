@@ -1644,6 +1644,21 @@ a:hover { color: var(--hp-gold-light); }
   box-shadow: 0 0 0 3px rgba(197, 164, 78, 0.1);
 }
 
+.hp-auth__phone-row {
+  display: flex;
+  gap: 8px;
+}
+
+.hp-auth__country-code {
+  width: 110px !important;
+  flex-shrink: 0;
+  padding-right: 28px !important;
+}
+
+.hp-auth__phone-row input {
+  flex: 1;
+}
+
 .hp-auth__select option {
   background: #161E2A;
   color: #ECF2FA;

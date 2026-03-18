@@ -7,6 +7,7 @@ export function AdminSignupPage() {
     firstName: '',
     lastName: '',
     email: '',
+    countryCode: '+44',
     phone: '',
     companyName: '',
     industry: '',
@@ -96,7 +97,42 @@ export function AdminSignupPage() {
 
             <div className="hp-auth__field">
               <label htmlFor="signup-phone">Phone Number</label>
-              <input id="signup-phone" name="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="+44 7700 900000" disabled={disabled} />
+              <div className="hp-auth__phone-row">
+                <select name="countryCode" value={form.countryCode} onChange={handleChange} disabled={disabled} className="hp-auth__select hp-auth__country-code">
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+353">🇮🇪 +353</option>
+                  <option value="+49">🇩🇪 +49</option>
+                  <option value="+33">🇫🇷 +33</option>
+                  <option value="+34">🇪🇸 +34</option>
+                  <option value="+39">🇮🇹 +39</option>
+                  <option value="+31">🇳🇱 +31</option>
+                  <option value="+351">🇵🇹 +351</option>
+                  <option value="+41">🇨🇭 +41</option>
+                  <option value="+43">🇦🇹 +43</option>
+                  <option value="+46">🇸🇪 +46</option>
+                  <option value="+47">🇳🇴 +47</option>
+                  <option value="+45">🇩🇰 +45</option>
+                  <option value="+358">🇫🇮 +358</option>
+                  <option value="+48">🇵🇱 +48</option>
+                  <option value="+356">🇲🇹 +356</option>
+                  <option value="+357">🇨🇾 +357</option>
+                  <option value="+971">🇦🇪 +971</option>
+                  <option value="+966">🇸🇦 +966</option>
+                  <option value="+91">🇮🇳 +91</option>
+                  <option value="+61">🇦🇺 +61</option>
+                  <option value="+64">🇳🇿 +64</option>
+                  <option value="+27">🇿🇦 +27</option>
+                  <option value="+234">🇳🇬 +234</option>
+                  <option value="+55">🇧🇷 +55</option>
+                  <option value="+52">🇲🇽 +52</option>
+                  <option value="+81">🇯🇵 +81</option>
+                  <option value="+82">🇰🇷 +82</option>
+                  <option value="+65">🇸🇬 +65</option>
+                  <option value="+852">🇭🇰 +852</option>
+                </select>
+                <input id="signup-phone" name="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="7700 900000" disabled={disabled} />
+              </div>
             </div>
 
             <div className="hp-auth__field">
