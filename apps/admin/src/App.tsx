@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext';
 import { AdminLayout } from './components/layout/AdminLayout';
+import { AdminLoginPage } from './pages/AdminLoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ApplicationsPage } from './pages/ApplicationsPage';
 import { MerchantsPage } from './pages/MerchantsPage';
@@ -16,10 +18,46 @@ import { DisputesPage } from './pages/DisputesPage';
 import { ReconciliationPage } from './pages/ReconciliationPage';
 import { DeveloperPage } from './pages/DeveloperPage';
 
-export function App() {
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAdminAuth();
+
+  if (isLoading) {
+    return (
+      <div className="hp-auth">
+        <div className="hp-auth__loading">
+          <img src="/logo.png" alt="MTRX PAY" className="hp-auth__loading-logo" />
+          <div className="hp-auth__spinner" />
+          <p className="hp-auth__loading-text">Loading admin portal...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+function AppRoutes() {
+  const { isAuthenticated, isLoading } = useAdminAuth();
+
   return (
     <Routes>
-      <Route element={<AdminLayout />}>
+      <Route
+        path="/login"
+        element={
+          !isLoading && isAuthenticated ? <Navigate to="/" replace /> : <AdminLoginPage />
+        }
+      />
+      <Route
+        element={
+          <ProtectedRoute>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<DashboardPage />} />
         <Route path="applications" element={<ApplicationsPage />} />
         <Route path="merchants" element={<MerchantsPage />} />
@@ -38,5 +76,13 @@ export function App() {
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+  );
+}
+
+export function App() {
+  return (
+    <AdminAuthProvider>
+      <AppRoutes />
+    </AdminAuthProvider>
   );
 }

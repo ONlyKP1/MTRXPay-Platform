@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAdminAuth } from '../../context/AdminAuthContext';
 
 const icons = {
   dashboard: (
@@ -126,9 +127,23 @@ const navSections = [
   },
 ];
 
+const roleLabels: Record<string, string> = {
+  super_admin: 'Super Administrator',
+  compliance_officer: 'Compliance Officer',
+  finance: 'Finance',
+  support: 'Support Agent',
+};
+
 export function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAdminAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="admin">
@@ -167,12 +182,20 @@ export function AdminLayout() {
 
         <div className="admin__sidebar-bottom">
           <div className="admin__user">
-            <div className="admin__user-avatar">SA</div>
+            <div className="admin__user-avatar">
+              {user?.firstName?.[0]}{user?.lastName?.[0]}
+            </div>
             <div className="admin__user-info">
-              <span className="admin__user-name">System Admin</span>
-              <span className="admin__user-role">Super Administrator</span>
+              <span className="admin__user-name">{user?.firstName} {user?.lastName}</span>
+              <span className="admin__user-role">{user ? roleLabels[user.role] || user.role : ''}</span>
             </div>
           </div>
+          <button className="admin__sign-out" onClick={handleLogout}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Sign Out
+          </button>
         </div>
       </aside>
 
