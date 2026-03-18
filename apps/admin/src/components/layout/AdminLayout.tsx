@@ -141,7 +141,7 @@ export function AdminLayout() {
       <aside className={`admin__sidebar${sidebarOpen ? ' admin__sidebar--open' : ''}`}>
         <div className="admin__sidebar-top">
           <div className="admin__logo">
-            <span className="admin__logo-text">MTRX</span>
+            <img src="/logo.png" alt="MTRX PAY" className="admin__logo-img" />
             <span className="admin__logo-badge">ADMIN</span>
           </div>
 

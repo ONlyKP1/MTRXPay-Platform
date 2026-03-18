@@ -190,12 +190,10 @@ a:hover { color: var(--hp-gold-light); }
   margin-bottom: 36px;
 }
 
-/* Logo — Italiana with gold gradient, matching hp-nav__brand */
-.admin__logo-text {
-  font-family: var(--hp-font-logo);
-  font-size: 28px;
-  letter-spacing: 4px;
-  color: var(--hp-gold);
+/* Logo — matching hp-nav__logo */
+.admin__logo-img {
+  height: 60px;
+  width: auto;
 }
 
 .admin__logo-badge {
