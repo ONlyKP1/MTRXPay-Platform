@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, Badge } from '@mtrx/ui';
 
 interface Merchant {
@@ -82,6 +82,7 @@ type Tab = 'overview' | 'transactions' | 'documents' | 'config' | 'notes';
 
 export function MerchantDetailPage() {
   const { merchantId } = useParams();
+  const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('overview');
   const m = merchants[merchantId || ''];
 
@@ -115,6 +116,12 @@ export function MerchantDetailPage() {
           </div>
         </div>
         <div className="admin-page__actions">
+          <button className="mtrx-btn mtrx-btn--ghost mtrx-btn--sm" onClick={() => navigate('/communications')}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+            Message
+          </button>
           <button className="mtrx-btn mtrx-btn--secondary mtrx-btn--sm">Suspend</button>
           <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm">Edit Merchant</button>
         </div>
