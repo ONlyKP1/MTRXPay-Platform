@@ -1400,6 +1400,7 @@ a:hover { color: var(--hp-gold-light); }
 .hp-auth__submit {
   margin-top: 4px;
   padding: 14px 32px;
+  width: 100%;
   border-radius: var(--hp-radius-pill);
   font-family: var(--hp-font-body);
   font-size: 0.85rem;
@@ -1464,6 +1465,23 @@ a:hover { color: var(--hp-gold-light); }
   border-top-color: #06080d;
   border-radius: 50%;
   animation: mtrx-spin 0.6s linear infinite;
+}
+
+.hp-auth__footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: var(--hp-text-muted);
+}
+
+.hp-auth__footer a {
+  color: var(--hp-gold);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.hp-auth__footer a:hover {
+  text-decoration: underline;
 }
 
 /* Demo credentials hint */
