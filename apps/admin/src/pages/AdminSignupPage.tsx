@@ -83,7 +83,7 @@ export function AdminSignupPage() {
             </div>
           )}
 
-          <form className="hp-auth__form" onSubmit={handleSubmit}>
+          <form className="hp-auth__form hp-auth__form--compact" onSubmit={handleSubmit}>
             <div className="hp-auth__row">
               <div className="hp-auth__field">
                 <label htmlFor="signup-first">First Name</label>

@@ -1226,12 +1226,13 @@ a:hover { color: var(--hp-gold-light); }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 20px;
+  padding: 40px 20px;
   background: #06080d;
   color: var(--hp-text);
   font-family: var(--hp-font-body);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .hp-auth__bg {
@@ -1290,7 +1291,7 @@ a:hover { color: var(--hp-gold-light); }
   background: linear-gradient(160deg, rgba(20, 24, 34, 0.95) 0%, rgba(12, 14, 20, 0.98) 100%);
   border: 1px solid rgba(197, 164, 78, 0.12);
   border-radius: 24px;
-  padding: 40px 36px;
+  padding: 36px 32px;
   -webkit-backdrop-filter: blur(24px);
   backdrop-filter: blur(24px);
   box-shadow:
@@ -1314,17 +1315,17 @@ a:hover { color: var(--hp-gold-light); }
   display: block;
   text-align: center;
   text-decoration: none;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .hp-auth__logo-inner img {
-  height: 80px;
+  height: 64px;
   object-fit: contain;
   filter: drop-shadow(0 2px 8px rgba(197, 164, 78, 0.2));
 }
 
 .hp-auth__title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: #fff;
@@ -1338,10 +1339,10 @@ a:hover { color: var(--hp-gold-light); }
 }
 
 .hp-auth__subtitle {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--hp-text-muted);
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 22px;
 }
 
 .hp-auth__form {
@@ -1634,6 +1635,36 @@ a:hover { color: var(--hp-gold-light); }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.hp-auth__row .hp-auth__field input,
+.hp-auth__row .hp-auth__field select {
+  width: 100%;
+}
+
+.hp-auth__field input,
+.hp-auth__field select,
+.hp-auth__select {
+  width: 100%;
+}
+
+/* Compact form for signup — tighter spacing */
+.hp-auth__form--compact {
+  gap: 12px;
+}
+
+.hp-auth__form--compact .hp-auth__field {
+  gap: 4px;
+}
+
+.hp-auth__form--compact .hp-auth__field input,
+.hp-auth__form--compact .hp-auth__field select {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+}
+
+.hp-auth__form--compact .hp-auth__field label {
+  font-size: 0.68rem;
 }
 
 @media (max-width: 480px) {
