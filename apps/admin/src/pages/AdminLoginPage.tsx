@@ -49,8 +49,8 @@ export function AdminLoginPage() {
             <img src="/logo.png" alt="MTRX PAY" />
           </div>
 
-          <h1 className="hp-auth__title">Admin <em>Portal</em></h1>
-          <p className="hp-auth__subtitle">Sign in to access the administration dashboard</p>
+          <h1 className="hp-auth__title">Welcome <em>Back</em></h1>
+          <p className="hp-auth__subtitle">Sign in to your merchant dashboard</p>
 
           {status === 'error' && (
             <div className="hp-auth__alert hp-auth__alert--error">
@@ -110,7 +110,7 @@ export function AdminLoginPage() {
           </form>
 
           <p className="hp-auth__footer">
-            Need an account? <Link to="/signup">Request access</Link>
+            New merchant? <Link to="/signup">Create an account</Link>
           </p>
 
           <div className="hp-auth__demo">

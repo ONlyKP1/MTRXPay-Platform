@@ -8,10 +8,10 @@ export function AdminSignupPage() {
     lastName: '',
     email: '',
     phone: '',
+    companyName: '',
+    industry: '',
     password: '',
     confirmPassword: '',
-    role: 'support',
-    inviteCode: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -39,14 +39,8 @@ export function AdminSignupPage() {
       return;
     }
 
-    if (!form.inviteCode) {
-      setStatus('error');
-      setErrorMsg('A valid invite code is required to create an admin account.');
-      return;
-    }
-
     setStatus('success');
-    setTimeout(() => navigate('/login'), 1500);
+    setTimeout(() => navigate('/onboarding'), 1500);
   };
 
   const disabled = status === 'loading' || status === 'success';
@@ -66,8 +60,8 @@ export function AdminSignupPage() {
             <img src="/logo.png" alt="MTRX PAY" />
           </Link>
 
-          <h1 className="hp-auth__title">Create <em>Account</em></h1>
-          <p className="hp-auth__subtitle">Register as an administrator on the MTRX platform</p>
+          <h1 className="hp-auth__title">Get <em>Started</em></h1>
+          <p className="hp-auth__subtitle">Create your merchant account and start accepting payments</p>
 
           {status === 'error' && (
             <div className="hp-auth__alert hp-auth__alert--error">
@@ -79,7 +73,7 @@ export function AdminSignupPage() {
           {status === 'success' && (
             <div className="hp-auth__alert hp-auth__alert--success">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              Account created. Redirecting to login...
+              Account created. Starting onboarding...
             </div>
           )}
 
@@ -87,17 +81,17 @@ export function AdminSignupPage() {
             <div className="hp-auth__row">
               <div className="hp-auth__field">
                 <label htmlFor="signup-first">First Name</label>
-                <input id="signup-first" name="firstName" type="text" required value={form.firstName} onChange={handleChange} placeholder="James" disabled={disabled} />
+                <input id="signup-first" name="firstName" type="text" required value={form.firstName} onChange={handleChange} placeholder="John" disabled={disabled} />
               </div>
               <div className="hp-auth__field">
                 <label htmlFor="signup-last">Last Name</label>
-                <input id="signup-last" name="lastName" type="text" required value={form.lastName} onChange={handleChange} placeholder="Mitchell" disabled={disabled} />
+                <input id="signup-last" name="lastName" type="text" required value={form.lastName} onChange={handleChange} placeholder="Smith" disabled={disabled} />
               </div>
             </div>
 
             <div className="hp-auth__field">
-              <label htmlFor="signup-email">Work Email</label>
-              <input id="signup-email" name="email" type="email" required value={form.email} onChange={handleChange} placeholder="james@mtrxpay.com" disabled={disabled} autoComplete="email" />
+              <label htmlFor="signup-email">Business Email</label>
+              <input id="signup-email" name="email" type="email" required value={form.email} onChange={handleChange} placeholder="you@yourcompany.com" disabled={disabled} autoComplete="email" />
             </div>
 
             <div className="hp-auth__field">
@@ -106,18 +100,26 @@ export function AdminSignupPage() {
             </div>
 
             <div className="hp-auth__field">
-              <label htmlFor="signup-role">Role</label>
-              <select id="signup-role" name="role" value={form.role} onChange={handleChange} disabled={disabled} className="hp-auth__select">
-                <option value="support">Support Agent</option>
-                <option value="compliance_officer">Compliance Officer</option>
-                <option value="finance">Finance</option>
-                <option value="super_admin">Super Administrator</option>
-              </select>
+              <label htmlFor="signup-company">Company Name</label>
+              <input id="signup-company" name="companyName" type="text" required value={form.companyName} onChange={handleChange} placeholder="Your Company Ltd" disabled={disabled} />
             </div>
 
             <div className="hp-auth__field">
-              <label htmlFor="signup-invite">Invite Code</label>
-              <input id="signup-invite" name="inviteCode" type="text" required value={form.inviteCode} onChange={handleChange} placeholder="Enter your organisation invite code" disabled={disabled} />
+              <label htmlFor="signup-industry">Industry</label>
+              <select id="signup-industry" name="industry" value={form.industry} onChange={handleChange} disabled={disabled} className="hp-auth__select">
+                <option value="">Select your industry...</option>
+                <option value="crypto">Cryptocurrency & Web3</option>
+                <option value="gaming">Gaming & iGaming</option>
+                <option value="adult">Adult Entertainment</option>
+                <option value="cbd">CBD & Cannabis</option>
+                <option value="nutra">Nutraceuticals</option>
+                <option value="forex">Forex & Trading</option>
+                <option value="travel">Travel & Tourism</option>
+                <option value="ecommerce">E-commerce & Retail</option>
+                <option value="saas">SaaS & Technology</option>
+                <option value="content">Content Creators</option>
+                <option value="other">Other</option>
+              </select>
             </div>
 
             <div className="hp-auth__row">
@@ -132,7 +134,7 @@ export function AdminSignupPage() {
             </div>
 
             <button type="submit" className="hp-auth__submit" disabled={disabled}>
-              {status === 'loading' ? <span className="hp-auth__spinner" /> : status === 'success' ? 'Redirecting...' : 'Create Account'}
+              {status === 'loading' ? <span className="hp-auth__spinner" /> : status === 'success' ? 'Starting onboarding...' : 'Create Merchant Account'}
             </button>
           </form>
 
