@@ -8,7 +8,7 @@ router.get('/health', async (req, res) => {
   try {
     await query('SELECT 1');
     dbStatus = 'connected';
-  } catch (error) {
+  } catch (_error) {
     dbStatus = 'disconnected';
   }
 
