@@ -133,33 +133,7 @@ a:hover { color: var(--hp-gold-light); }
   background: var(--hp-bg);
 }
 
-/* ── Subtle grid pattern — matching hp-hero__grid ── */
-.admin::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(197, 164, 78, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(197, 164, 78, 0.02) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 20%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 70% 30%, black 20%, transparent 80%);
-}
-
-/* ── Radial gold glow — matching hp-hero__radial ── */
-.admin::after {
-  content: '';
-  position: fixed;
-  z-index: 0;
-  top: -15%;
-  right: 5%;
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(ellipse at center, rgba(197, 164, 78, 0.05) 0%, transparent 65%);
-  pointer-events: none;
-}
+/* Background effects handled by video bg layer */
 
 /* ── Sidebar ── */
 .admin__sidebar {
@@ -319,7 +293,46 @@ a:hover { color: var(--hp-gold-light); }
   z-index: 1;
 }
 
+/* Video background — matching hp-hero on mtrxpay.com */
+.admin__video-bg {
+  position: fixed;
+  top: 0;
+  left: var(--hp-sidebar-w);
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.admin__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.admin__video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to bottom, #05070cd9, #05070cc7, #05070ced);
+}
+
+.admin__video-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image:
+    linear-gradient(rgba(197, 164, 78, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(197, 164, 78, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 70% at 60% 20%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 60% 20%, black 20%, transparent 80%);
+}
+
 .admin__content {
+  position: relative;
+  z-index: 1;
   padding: 32px;
   max-width: 1400px;
   animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -357,6 +370,7 @@ a:hover { color: var(--hp-gold-light); }
   }
   .admin__sidebar--open { transform: translateX(0); }
   .admin__main { margin-left: 0; }
+  .admin__video-bg { left: 0; }
   .admin__content { padding: 80px 16px 32px; }
 }
 

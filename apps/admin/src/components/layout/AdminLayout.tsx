@@ -177,6 +177,19 @@ export function AdminLayout() {
       </aside>
 
       <main className="admin__main">
+        <div className="admin__video-bg">
+          <video
+            src="/hero-bg.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+            className="admin__video"
+          />
+          <div className="admin__video-overlay" />
+          <div className="admin__video-grid" />
+        </div>
         <div className="admin__content">
           <Outlet />
         </div>
