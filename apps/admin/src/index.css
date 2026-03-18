@@ -1650,7 +1650,7 @@ a:hover { color: var(--hp-gold-light); }
 }
 
 .hp-auth__country-code {
-  width: 110px !important;
+  width: 150px !important;
   flex-shrink: 0;
   padding-right: 28px !important;
 }
