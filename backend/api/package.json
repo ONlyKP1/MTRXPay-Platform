@@ -10,7 +10,11 @@
     "seed": "node scripts/seed.js",
     "db:setup": "npm run migrate && npm run seed",
     "lint": "eslint src/ server.js scripts/",
-    "lint:fix": "eslint src/ server.js scripts/ --fix"
+    "lint:fix": "eslint src/ server.js scripts/ --fix",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -18,12 +22,16 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "eslint": "^10.0.3"
+    "eslint": "^10.0.3",
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
   }
 }
