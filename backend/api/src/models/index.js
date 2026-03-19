@@ -6,6 +6,9 @@ const KycSubmission = require('./KycSubmission');
 const BeneficialOwner = require('./BeneficialOwner');
 const Document = require('./Document');
 const OnboardingProgress = require('./OnboardingProgress');
+const KycEvent = require('./KycEvent');
+const SystemLog = require('./SystemLog');
+const Transaction = require('./Transaction');
 
 module.exports = {
   User,
@@ -15,5 +18,8 @@ module.exports = {
   KycSubmission,
   BeneficialOwner,
   Document,
-  OnboardingProgress
+  OnboardingProgress,
+  KycEvent,
+  SystemLog,
+  Transaction
 };

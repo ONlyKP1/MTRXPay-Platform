@@ -6,6 +6,7 @@ const { query } = require('../../config/database');
 const { JWT_SECRET, JWT_EXPIRES_IN } = require('../../config/env');
 const { validateLogin, validateRegister } = require('../../middleware/validate');
 const { USER_ROLES } = require('../../shared/constants');
+const { authError, badRequest, serverError, ERROR_CODES } = require('../../utils/response');
 
 // POST /api/auth/login
 router.post('/api/auth/login', validateLogin, async (req, res) => {
@@ -18,14 +19,14 @@ router.post('/api/auth/login', validateLogin, async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return authError(res, 'Invalid credentials', ERROR_CODES.AUTH_INVALID_CREDENTIALS);
     }
 
     const user = result.rows[0];
 
     const validPassword = await bcrypt.compare(password, user.password_hash);
     if (!validPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return authError(res, 'Invalid credentials', ERROR_CODES.AUTH_INVALID_CREDENTIALS);
     }
 
     const token = jwt.sign(
@@ -35,17 +36,20 @@ router.post('/api/auth/login', validateLogin, async (req, res) => {
     );
 
     res.json({
-      token,
-      user: {
-        id: user.id,
-        full_name: user.full_name,
-        email: user.email,
-        role: user.role,
-        merchant_id: user.merchant_id
+      success: true,
+      data: {
+        token,
+        user: {
+          id: user.id,
+          full_name: user.full_name,
+          email: user.email,
+          role: user.role,
+          merchant_id: user.merchant_id
+        }
       }
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return serverError(res, 'Login failed', error);
   }
 });
 
@@ -56,7 +60,7 @@ router.post('/api/auth/register', validateRegister, async (req, res) => {
 
     const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
     if (existing.rows.length > 0) {
-      return res.status(400).json({ error: 'Email already registered' });
+      return badRequest(res, 'Email already registered', ERROR_CODES.USER_ALREADY_EXISTS);
     }
 
     const password_hash = await bcrypt.hash(password, 10);
@@ -74,9 +78,12 @@ router.post('/api/auth/register', validateRegister, async (req, res) => {
       { expiresIn: JWT_EXPIRES_IN }
     );
 
-    res.status(201).json({ token, user });
+    res.status(201).json({
+      success: true,
+      data: { token, user }
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return serverError(res, 'Registration failed', error);
   }
 });
 

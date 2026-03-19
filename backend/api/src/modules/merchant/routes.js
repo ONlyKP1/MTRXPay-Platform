@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 const { validateMerchantProfile } = require('../../middleware/validate');
-const { success, notFoundError, serverError } = require('../../utils/response');
+const { success, notFoundError, serverError, badRequest, forbiddenError, ERROR_CODES } = require('../../utils/response');
 const merchantService = require('../../services/merchantService');
 
 /**
@@ -56,7 +56,7 @@ router.post('/api/merchants', auth, validateMerchantProfile, async (req, res) =>
     // Check if user already has a merchant
     const existing = await merchantService.getMerchantForUser(req.user.id);
     if (existing) {
-      return res.status(400).json({ success: false, error: 'User already has a merchant profile' });
+      return badRequest(res, 'User already has a merchant profile', 'MERCHANT_ALREADY_EXISTS');
     }
 
     const merchant = await merchantService.createMerchantProfile(req.body, req.user.id);
@@ -168,7 +168,7 @@ router.patch('/api/merchants/:merchantId', auth, async (req, res) => {
     // Verify user owns this merchant
     const userMerchant = await merchantService.getMerchantForUser(req.user.id);
     if (!userMerchant || userMerchant.id !== merchantId) {
-      return res.status(403).json({ success: false, error: 'Not authorized to update this merchant' });
+      return forbiddenError(res, 'Not authorized to update this merchant', ERROR_CODES.ACCESS_DENIED);
     }
 
     const merchant = await merchantService.updateMerchantProfile(merchantId, req.body);

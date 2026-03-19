@@ -76,3 +76,50 @@ global.mockDocument = (overrides = {}) => ({
   status: 'uploaded',
   ...overrides
 });
+
+// KYC mock helpers
+global.mockKycUser = (overrides = {}) => ({
+  id: 'user-kyc-123',
+  email: 'kyc@example.com',
+  full_name: 'KYC Test User',
+  role: 'merchant',
+  kyc_status: 'not_started',
+  user_state: 'REGISTERED',
+  kyc_provider: null,
+  kyc_provider_applicant_id: null,
+  ...overrides
+});
+
+global.mockApprovedUser = () => mockKycUser({
+  kyc_status: 'approved',
+  user_state: 'KYC_APPROVED',
+  kyc_provider: 'SUMSUB',
+  kyc_provider_applicant_id: 'sumsub-123'
+});
+
+global.mockPendingUser = () => mockKycUser({
+  kyc_status: 'pending',
+  user_state: 'KYC_PENDING',
+  kyc_provider: 'SUMSUB',
+  kyc_provider_applicant_id: 'sumsub-123'
+});
+
+global.mockRejectedUser = () => mockKycUser({
+  kyc_status: 'rejected',
+  user_state: 'KYC_REJECTED',
+  kyc_rejection_reason: 'Document fraud detected',
+  kyc_provider: 'SUMSUB',
+  kyc_provider_applicant_id: 'sumsub-123'
+});
+
+global.mockSumSubWebhook = (overrides = {}) => ({
+  type: 'applicantReviewed',
+  applicantId: 'sumsub-123',
+  externalUserId: 'user-kyc-123',
+  reviewStatus: 'completed',
+  reviewResult: {
+    reviewAnswer: 'GREEN'
+  },
+  createdAt: new Date().toISOString(),
+  ...overrides
+});

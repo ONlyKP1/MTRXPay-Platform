@@ -41,7 +41,7 @@ router.post('/api/kyc/start', auth, async (req, res) => {
  * /api/kyc/status:
  *   get:
  *     summary: Get KYC verification status
- *     description: Returns the current KYC verification status for the authenticated user
+ *     description: Returns the current KYC status with transaction eligibility
  *     tags: [KYC]
  *     security:
  *       - bearerAuth: []
@@ -58,16 +58,18 @@ router.post('/api/kyc/start', auth, async (req, res) => {
  *                 data:
  *                   type: object
  *                   properties:
- *                     id:
- *                       type: string
- *                     userId:
- *                       type: string
  *                     status:
  *                       type: string
- *                       enum: [NOT_STARTED, IN_PROGRESS, PENDING_REVIEW, APPROVED, REJECTED]
- *                     provider:
+ *                       enum: [not_started, started, pending, approved, rejected, pending_manual_review]
+ *                     userState:
  *                       type: string
- *                       enum: [SUMSUB, MOCK]
+ *                       enum: [REGISTERED, KYC_STARTED, KYC_PENDING, KYC_APPROVED, KYC_REJECTED]
+ *                     canTransact:
+ *                       type: boolean
+ *                       description: True only when KYC is approved
+ *                     reason:
+ *                       type: string
+ *                       description: Why user cannot transact (null if canTransact is true)
  *       401:
  *         description: Unauthorized
  */

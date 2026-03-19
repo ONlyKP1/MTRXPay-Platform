@@ -14,7 +14,16 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+
+// Capture raw body for webhook signature verification
+app.use(express.json({
+  verify: (req, res, buf) => {
+    // Store raw body for webhook signature verification
+    if (req.originalUrl.startsWith('/api/webhooks')) {
+      req.rawBody = buf.toString();
+    }
+  }
+}));
 
 // API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {

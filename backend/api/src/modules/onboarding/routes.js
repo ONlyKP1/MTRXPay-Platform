@@ -698,9 +698,12 @@ router.post(
       if (!result.success) {
         return res.status(400).json({
           success: false,
-          errors: result.errors,
-          warnings: result.warnings,
-          message: 'Submission validation failed'
+          error: {
+            code: 'SUBMISSION_VALIDATION_FAILED',
+            message: 'Submission validation failed',
+            fields: result.errors
+          },
+          warnings: result.warnings
         });
       }
 

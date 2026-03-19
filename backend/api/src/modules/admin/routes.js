@@ -7,7 +7,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 const { requireAdmin } = require('../../middleware/authorize');
-const { success, notFoundError, serverError } = require('../../utils/response');
+const { success, notFoundError, serverError, badRequest } = require('../../utils/response');
 const { query } = require('../../config/database');
 const reviewService = require('../../services/reviewService');
 
@@ -328,7 +328,7 @@ router.post('/api/admin/merchants/:merchantId/under-review', async (req, res) =>
       return notFoundError(res, error.message);
     }
     if (error.message.includes('Cannot move')) {
-      return res.status(400).json({ success: false, error: error.message });
+      return badRequest(res, error.message, 'INVALID_STATUS_TRANSITION');
     }
     return serverError(res, error.message);
   }
@@ -394,7 +394,7 @@ router.post('/api/admin/merchants/:merchantId/approve', async (req, res) => {
       return notFoundError(res, error.message);
     }
     if (error.message.includes('Cannot approve')) {
-      return res.status(400).json({ success: false, error: error.message });
+      return badRequest(res, error.message, 'INVALID_STATUS_TRANSITION');
     }
     return serverError(res, error.message);
   }
@@ -453,7 +453,7 @@ router.post('/api/admin/merchants/:merchantId/reject', async (req, res) => {
     const { reason, notes, allowResubmission } = req.body;
 
     if (!reason) {
-      return res.status(400).json({ success: false, error: 'Rejection reason required' });
+      return badRequest(res, 'Rejection reason required', 'MISSING_REJECTION_REASON');
     }
 
     const result = await reviewService.markRejected(merchantId, req.user.id, {
@@ -468,7 +468,7 @@ router.post('/api/admin/merchants/:merchantId/reject', async (req, res) => {
       return notFoundError(res, error.message);
     }
     if (error.message.includes('Cannot reject')) {
-      return res.status(400).json({ success: false, error: error.message });
+      return badRequest(res, error.message, 'INVALID_STATUS_TRANSITION');
     }
     return serverError(res, error.message);
   }
@@ -523,7 +523,7 @@ router.post('/api/admin/merchants/:merchantId/notes', async (req, res) => {
     const { note, noteType } = req.body;
 
     if (!note) {
-      return res.status(400).json({ success: false, error: 'Note content required' });
+      return badRequest(res, 'Note content required', 'MISSING_NOTE_CONTENT');
     }
 
     const result = await reviewService.addReviewNote(merchantId, req.user.id, note, noteType);
@@ -637,7 +637,7 @@ router.patch('/api/admin/documents/:documentId/status', async (req, res) => {
       return notFoundError(res, error.message);
     }
     if (error.message.includes('Invalid')) {
-      return res.status(400).json({ success: false, error: error.message });
+      return badRequest(res, error.message, 'INVALID_DOCUMENT_STATUS');
     }
     return serverError(res, error.message);
   }

@@ -40,16 +40,71 @@ const startKyc = async (userId) => {
 
 /**
  * Get KYC status for a user
+ * Returns consistent response shape for frontend
  * @param {string} userId - User ID
- * @returns {object|null} KYC record or null
+ * @returns {object} KYC status with canTransact flag
  */
 const getStatus = async (userId) => {
+  // Get user's KYC fields directly from users table
   const result = await query(
-    `SELECT * FROM kyc_verifications WHERE user_id = $1`,
+    `SELECT
+      kyc_status,
+      user_state,
+      kyc_rejection_reason,
+      kyc_reviewed_at,
+      kyc_provider,
+      kyc_provider_applicant_id
+     FROM users
+     WHERE id = $1`,
     [userId]
   );
 
-  return result.rows[0] || null;
+  if (result.rows.length === 0) {
+    return {
+      status: 'not_started',
+      userState: 'REGISTERED',
+      canTransact: false,
+      reason: 'User not found'
+    };
+  }
+
+  const user = result.rows[0];
+  const status = user.kyc_status || 'not_started';
+  const userState = user.user_state || 'REGISTERED';
+
+  // Determine canTransact based on KYC status
+  const canTransact = status === 'approved';
+
+  // Determine reason if cannot transact
+  let reason = null;
+  if (!canTransact) {
+    switch (status) {
+      case 'not_started':
+        reason = 'KYC verification not started';
+        break;
+      case 'started':
+        reason = 'KYC verification in progress';
+        break;
+      case 'pending':
+      case 'pending_manual_review':
+        reason = 'KYC verification pending review';
+        break;
+      case 'rejected':
+        reason = user.kyc_rejection_reason || 'KYC verification rejected';
+        break;
+      default:
+        reason = 'KYC verification required';
+    }
+  }
+
+  return {
+    status,
+    userState,
+    canTransact,
+    reason,
+    reviewedAt: user.kyc_reviewed_at,
+    provider: user.kyc_provider
+  };
 };
 
 /**
