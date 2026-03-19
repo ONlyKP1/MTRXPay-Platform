@@ -22,7 +22,7 @@ router.use(usersModule.routes);
 router.use(merchantModule.routes);
 router.use(onboardingModule.routes);
 router.use(documentsModule.routes);
-router.use(adminModule.routes);
 router.use(kycModule.routes);
+router.use(adminModule.routes);
 
 module.exports = router;
