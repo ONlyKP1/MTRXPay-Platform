@@ -1,18 +1,40 @@
 const express = require('express');
 const router = express.Router();
-const healthRoutes = require('./health');
-const apiRoutes = require('./api');
-const authRoutes = require('./auth');
-const meRoutes = require('./me');
-const merchantRoutes = require('./merchant');
-const onboardingRoutes = require('./onboarding');
 
-// Routes
+// Core routes
+const healthRoutes = require('./health');
+
+// Module routes
+const authModule = require('../modules/auth');
+const usersModule = require('../modules/users');
+const merchantModule = require('../modules/merchant');
+const onboardingModule = require('../modules/onboarding');
+const documentsModule = require('../modules/documents');
+const adminModule = require('../modules/admin');
+const kycModule = require('../modules/kyc');
+const webhooksModule = require('../modules/webhooks');
+const transactionsModule = require('../modules/transactions');
+const devWebhookRoutes = require('../modules/webhooks/dev.routes');
+
+// Health check
 router.use(healthRoutes);
-router.use(apiRoutes);
-router.use(authRoutes);
-router.use(meRoutes);
-router.use(merchantRoutes);
-router.use(onboardingRoutes);
+
+// Webhook routes (no auth - uses signature verification)
+router.use(webhooksModule.routes);
+
+// API modules (auth required)
+router.use(authModule.routes);
+router.use(usersModule.routes);
+router.use(merchantModule.routes);
+router.use(onboardingModule.routes);
+router.use(documentsModule.routes);
+router.use(kycModule.routes);
+router.use(transactionsModule.routes);
+router.use(adminModule.routes);
+
+// Dev routes (non-production only)
+if (process.env.NODE_ENV !== 'production') {
+  router.use('/dev', devWebhookRoutes);
+}
 
 module.exports = router;

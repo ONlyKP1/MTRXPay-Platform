@@ -1,0 +1,90 @@
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { query } = require('../../config/database');
+const { JWT_SECRET, JWT_EXPIRES_IN } = require('../../config/env');
+const { validateLogin, validateRegister } = require('../../middleware/validate');
+const { USER_ROLES } = require('../../shared/constants');
+const { authError, badRequest, serverError, ERROR_CODES } = require('../../utils/response');
+
+// POST /api/auth/login
+router.post('/api/auth/login', validateLogin, async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const result = await query(
+      'SELECT id, full_name, email, password_hash, role, merchant_id FROM users WHERE email = $1',
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return authError(res, 'Invalid credentials', ERROR_CODES.AUTH_INVALID_CREDENTIALS);
+    }
+
+    const user = result.rows[0];
+
+    const validPassword = await bcrypt.compare(password, user.password_hash);
+    if (!validPassword) {
+      return authError(res, 'Invalid credentials', ERROR_CODES.AUTH_INVALID_CREDENTIALS);
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    res.json({
+      success: true,
+      data: {
+        token,
+        user: {
+          id: user.id,
+          full_name: user.full_name,
+          email: user.email,
+          role: user.role,
+          merchant_id: user.merchant_id
+        }
+      }
+    });
+  } catch (error) {
+    return serverError(res, 'Login failed', error);
+  }
+});
+
+// POST /api/auth/register
+router.post('/api/auth/register', validateRegister, async (req, res) => {
+  try {
+    const { full_name, email, password } = req.body;
+
+    const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.rows.length > 0) {
+      return badRequest(res, 'Email already registered', ERROR_CODES.USER_ALREADY_EXISTS);
+    }
+
+    const password_hash = await bcrypt.hash(password, 10);
+
+    const result = await query(
+      'INSERT INTO users (full_name, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, full_name, email, role',
+      [full_name, email, password_hash, USER_ROLES.MERCHANT]
+    );
+
+    const user = result.rows[0];
+
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    res.status(201).json({
+      success: true,
+      data: { token, user }
+    });
+  } catch (error) {
+    return serverError(res, 'Registration failed', error);
+  }
+});
+
+module.exports = router;

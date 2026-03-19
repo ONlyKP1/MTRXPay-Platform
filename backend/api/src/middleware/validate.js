@@ -1,6 +1,7 @@
 /**
  * Request validation utilities
  * Do not trust incoming payloads
+ * Returns field-based errors: { field: "message" }
  */
 
 const { validationError } = require('../utils/response');
@@ -42,27 +43,27 @@ const sanitizeString = (value) => {
  */
 const validateRegister = (req, res, next) => {
   const { full_name, email, password } = req.body;
-  const errors = [];
+  const errors = {};
 
   // Check required fields
   if (!isNonEmptyString(full_name)) {
-    errors.push('Full name is required');
+    errors.fullName = 'Required';
   }
 
   if (!email) {
-    errors.push('Email is required');
+    errors.email = 'Required';
   } else if (!isValidEmail(email)) {
-    errors.push('Invalid email format');
+    errors.email = 'Invalid email format';
   }
 
   if (!password) {
-    errors.push('Password is required');
+    errors.password = 'Required';
   } else if (!isValidPassword(password)) {
-    errors.push('Password must be at least 6 characters');
+    errors.password = 'Must be at least 6 characters';
   }
 
-  if (errors.length > 0) {
-    return validationError(res, errors[0], errors);
+  if (Object.keys(errors).length > 0) {
+    return validationError(res, 'Validation failed', errors);
   }
 
   // Sanitize inputs
@@ -77,20 +78,20 @@ const validateRegister = (req, res, next) => {
  */
 const validateLogin = (req, res, next) => {
   const { email, password } = req.body;
-  const errors = [];
+  const errors = {};
 
   if (!email) {
-    errors.push('Email is required');
+    errors.email = 'Required';
   } else if (!isValidEmail(email)) {
-    errors.push('Invalid email format');
+    errors.email = 'Invalid email format';
   }
 
   if (!password) {
-    errors.push('Password is required');
+    errors.password = 'Required';
   }
 
-  if (errors.length > 0) {
-    return validationError(res, errors[0], errors);
+  if (Object.keys(errors).length > 0) {
+    return validationError(res, 'Validation failed', errors);
   }
 
   // Sanitize
@@ -104,22 +105,22 @@ const validateLogin = (req, res, next) => {
  */
 const validateOnboarding = (req, res, next) => {
   const { business_name, trading_name } = req.body;
-  const errors = [];
+  const errors = {};
 
   if (!isNonEmptyString(business_name)) {
-    errors.push('Business name is required');
+    errors.businessName = 'Required';
   } else if (business_name.length > 255) {
-    errors.push('Business name too long (max 255 characters)');
+    errors.businessName = 'Must be 255 characters or less';
   }
 
   if (trading_name && typeof trading_name !== 'string') {
-    errors.push('Trading name must be a string');
+    errors.tradingName = 'Must be a string';
   } else if (trading_name && trading_name.length > 255) {
-    errors.push('Trading name too long (max 255 characters)');
+    errors.tradingName = 'Must be 255 characters or less';
   }
 
-  if (errors.length > 0) {
-    return validationError(res, errors[0], errors);
+  if (Object.keys(errors).length > 0) {
+    return validationError(res, 'Validation failed', errors);
   }
 
   // Sanitize
@@ -129,6 +130,9 @@ const validateOnboarding = (req, res, next) => {
   next();
 };
 
+// Import onboarding validators
+const onboardingValidators = require('./validators/onboarding');
+
 module.exports = {
   isNonEmptyString,
   isValidEmail,
@@ -136,5 +140,7 @@ module.exports = {
   sanitizeString,
   validateRegister,
   validateLogin,
-  validateOnboarding
+  validateOnboarding,
+  // Re-export onboarding validators
+  ...onboardingValidators
 };

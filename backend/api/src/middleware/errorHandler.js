@@ -4,7 +4,7 @@
  */
 
 const { NODE_ENV } = require('../config/env');
-const { serverError } = require('../utils/response');
+const { serverError, ERROR_CODES } = require('../utils/response');
 
 /**
  * Log error with readable format
@@ -42,11 +42,12 @@ const errorHandler = (err, req, res, next) => {
   }
 
   // Safe error message - no stack traces in production
+  // The serverError helper handles sanitization
   const message = NODE_ENV === 'production'
     ? 'An unexpected error occurred'
     : err.message;
 
-  return serverError(res, message);
+  return serverError(res, message, err);
 };
 
 /**
@@ -56,7 +57,7 @@ const notFoundHandler = (req, res) => {
   return res.status(404).json({
     success: false,
     error: {
-      type: 'NOT_FOUND_ERROR',
+      code: ERROR_CODES.NOT_FOUND,
       message: `Route ${req.method} ${req.path} not found`
     }
   });

@@ -1,0 +1,643 @@
+{
+  "info": {
+    "name": "MTRX Pay API - Day 4",
+    "description": "Merchant onboarding API endpoints for MTRX Pay platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "authToken",
+      "value": ""
+    },
+    {
+      "key": "merchantId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"merchant@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"fullName\": \"John Smith\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('authToken', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"merchant@example.com\",\n  \"password\": \"SecurePass123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Merchants",
+      "item": [
+        {
+          "name": "Create Merchant Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('merchantId', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"legalBusinessName\": \"Acme Corporation Ltd\",\n  \"tradingName\": \"Acme Corp\",\n  \"businessType\": \"limited_company\",\n  \"countryOfIncorporation\": \"United Kingdom\",\n  \"registrationNumber\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/merchants",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "merchants"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Merchant profile created\",\n  \"data\": {\n    \"id\": \"uuid-here\",\n    \"legal_business_name\": \"Acme Corporation Ltd\",\n    \"trading_name\": \"Acme Corp\",\n    \"business_type\": \"limited_company\",\n    \"country_of_incorporation\": \"United Kingdom\",\n    \"registration_number\": \"12345678\",\n    \"status\": \"draft\",\n    \"created_at\": \"2026-03-18T12:00:00.000Z\"\n  }\n}"
+            },
+            {
+              "name": "Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": {\n    \"legalBusinessName\": \"Required\",\n    \"businessType\": \"Must be one of: sole_trader, limited_company, llp, partnership, plc\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get My Merchant Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/merchants/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "merchants", "me"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": \"uuid-here\",\n    \"legal_business_name\": \"Acme Corporation Ltd\",\n    \"trading_name\": \"Acme Corp\",\n    \"business_type\": \"limited_company\",\n    \"country_of_incorporation\": \"United Kingdom\",\n    \"registration_number\": \"12345678\",\n    \"industry_type\": \"technology\",\n    \"status\": \"draft\",\n    \"created_at\": \"2026-03-18T12:00:00.000Z\",\n    \"updated_at\": \"2026-03-18T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Merchant Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tradingName\": \"Acme Corp Updated\",\n  \"industryType\": \"technology\",\n  \"businessDescription\": \"Software development and consulting services\",\n  \"websiteUrl\": \"https://acme.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/merchants/{{merchantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "merchants", "{{merchantId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Onboarding",
+      "item": [
+        {
+          "name": "Get Full Onboarding Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"merchant\": { \"id\": \"uuid\", \"legal_business_name\": \"Acme Corp\" },\n    \"progress\": {\n      \"currentStep\": \"documents\",\n      \"completionPercent\": 80,\n      \"canSubmit\": false,\n      \"missingItems\": [\"Business Registration document\"]\n    },\n    \"owners\": [],\n    \"documents\": []\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Save Business Details",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"industryType\": \"technology\",\n  \"businessDescription\": \"Software development and consulting services\",\n  \"websiteUrl\": \"https://acme.com\",\n  \"expectedMonthlyVolume\": \"10000-50000\",\n  \"expectedTransactionCount\": \"100-500\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/business-details",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "business-details"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Progress",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/progress",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "progress"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"merchantId\": \"uuid-here\",\n    \"currentStep\": \"documents\",\n    \"completionPercent\": 80,\n    \"canSubmit\": false,\n    \"isSubmitted\": false,\n    \"missingItems\": [\"Business Registration document\"],\n    \"sectionDetails\": {\n      \"account\": { \"complete\": true, \"label\": \"Account Created\" },\n      \"profile\": { \"complete\": true, \"label\": \"Merchant Profile\" },\n      \"address\": { \"complete\": true, \"label\": \"Business Address\" },\n      \"owners\": { \"complete\": true, \"label\": \"Owners & Directors\" },\n      \"documents\": { \"complete\": false, \"label\": \"Documents\", \"missing\": [\"Business Registration document\"] },\n      \"submitted\": { \"complete\": false, \"label\": \"Submitted for Review\" }\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Validate Submission",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/validate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "validate"]
+            }
+          },
+          "response": [
+            {
+              "name": "Valid",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"valid\": true,\n    \"errors\": []\n  }\n}"
+            },
+            {
+              "name": "Invalid",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"valid\": false,\n    \"errors\": [\n      { \"field\": \"documents\", \"message\": \"Missing required document: ID Proof\" },\n      { \"field\": \"owners\", \"message\": \"At least one beneficial owner required\" }\n    ]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Submit for Review",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "submit"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Onboarding submitted for review\",\n  \"data\": {\n    \"merchantId\": \"uuid-here\",\n    \"status\": \"under_review\",\n    \"submittedAt\": \"2026-03-18T12:00:00.000Z\"\n  }\n}"
+            },
+            {
+              "name": "Validation Failed",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Submission validation failed\",\n  \"errors\": [\n    { \"field\": \"documents\", \"message\": \"Missing required document: ID Proof\" }\n  ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Owners",
+      "item": [
+        {
+          "name": "Add Owner/Director",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"email\": \"john.smith@acme.com\",\n  \"phone\": \"+44 7700 900000\",\n  \"dateOfBirth\": \"1985-06-15\",\n  \"nationality\": \"British\",\n  \"role\": \"director\",\n  \"ownershipPercentage\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/owners",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "owners"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Beneficial owner added\",\n  \"data\": {\n    \"id\": \"uuid-here\",\n    \"merchant_id\": \"merchant-uuid\",\n    \"first_name\": \"John\",\n    \"last_name\": \"Smith\",\n    \"email\": \"john.smith@acme.com\",\n    \"role\": \"director\",\n    \"ownership_percentage\": 50,\n    \"created_at\": \"2026-03-18T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Owners",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/owners",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "owners"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Owner",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ownershipPercentage\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/owners/{{ownerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "owners", "{{ownerId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Owner",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/owners/{{ownerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "owners", "{{ownerId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Create Document Record",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentType\": \"id_proof\",\n  \"fileName\": \"passport.pdf\",\n  \"fileSize\": 102400,\n  \"mimeType\": \"application/pdf\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "documents"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Document record created\",\n  \"data\": {\n    \"id\": \"uuid-here\",\n    \"merchant_id\": \"merchant-uuid\",\n    \"document_type\": \"id_proof\",\n    \"file_name\": \"passport.pdf\",\n    \"status\": \"uploaded\",\n    \"created_at\": \"2026-03-18T12:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "documents"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Documents (Filtered)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/onboarding/{{merchantId}}/documents?type=id_proof&status=uploaded",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "onboarding", "{{merchantId}}", "documents"],
+              "query": [
+                { "key": "type", "value": "id_proof" },
+                { "key": "status", "value": "uploaded" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "List All Merchants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/merchants?status=under_review&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "merchants"],
+              "query": [
+                { "key": "status", "value": "under_review" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Pending Review",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "pending"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Merchant Details (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/merchants/{{merchantId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "merchants", "{{merchantId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Under Review",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Starting review process\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/merchants/{{merchantId}}/under-review",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "merchants", "{{merchantId}}", "under-review"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Merchant",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"All documents verified successfully\",\n  \"riskLevel\": \"low\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/merchants/{{merchantId}}/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "merchants", "{{merchantId}}", "approve"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Merchant approved\",\n  \"data\": {\n    \"merchant\": { \"id\": \"uuid\", \"status\": \"approved\" },\n    \"status\": \"approved\",\n    \"approvedAt\": \"2026-03-18T12:00:00.000Z\",\n    \"riskLevel\": \"low\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Reject Merchant",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Invalid business registration document\",\n  \"notes\": \"Document appears to be expired\",\n  \"allowResubmission\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/merchants/{{merchantId}}/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "merchants", "{{merchantId}}", "reject"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Merchant rejected\",\n  \"data\": {\n    \"merchant\": { \"id\": \"uuid\", \"status\": \"rejected\" },\n    \"status\": \"rejected\",\n    \"rejectedAt\": \"2026-03-18T12:00:00.000Z\",\n    \"reason\": \"Invalid business registration document\",\n    \"allowResubmission\": true\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Review Note",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Called merchant to verify address\",\n  \"noteType\": \"internal\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/merchants/{{merchantId}}/notes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "merchants", "{{merchantId}}", "notes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Review History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/merchants/{{merchantId}}/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "merchants", "{{merchantId}}", "history"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Document Status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"notes\": \"Document verified successfully\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/documents/{{documentId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "documents", "{{documentId}}", "status"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
