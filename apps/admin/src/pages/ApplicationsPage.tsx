@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Badge, StatCard } from '@mtrx/ui';
 
 type AppStatus = 'pending_review' | 'under_review' | 'info_requested' | 'approved' | 'rejected' | 'escalated';
@@ -71,6 +72,7 @@ const quickFilters: { key: Filter; label: string }[] = [
 ];
 
 export function ApplicationsPage() {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<Filter>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [riskFilter, setRiskFilter] = useState<RiskLevel | 'all'>('all');
@@ -190,7 +192,7 @@ export function ApplicationsPage() {
             </thead>
             <tbody>
               {filtered.map(app => (
-                <tr key={app.id} className="mtrx-table__row--clickable" onClick={() => setSelectedApp(app)}>
+                <tr key={app.id} className="mtrx-table__row--clickable" onClick={() => navigate(`/applications/${app.id}`)}>
                   <td>
                     <div className="admin-applicant-cell">
                       <strong>{app.businessName}</strong>
@@ -218,7 +220,7 @@ export function ApplicationsPage() {
                   <td><Badge variant={statusVariant(app.status)}>{statusLabel[app.status]}</Badge></td>
                   <td>
                     <div className="admin-row-actions" onClick={(e) => e.stopPropagation()}>
-                      <button className="admin-action-btn" title="Review" onClick={() => setSelectedApp(app)}>
+                      <button className="admin-action-btn" title="Review" onClick={() => navigate(`/applications/${app.id}`)}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                       </button>
                       {(app.status === 'pending_review' || app.status === 'under_review') && (

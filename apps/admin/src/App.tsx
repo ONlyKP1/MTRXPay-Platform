@@ -6,6 +6,7 @@ import { AdminSignupPage } from './pages/AdminSignupPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ApplicationsPage } from './pages/ApplicationsPage';
+import { ApplicationDetailPage } from './pages/ApplicationDetailPage';
 import { MerchantsPage } from './pages/MerchantsPage';
 import { MerchantDetailPage } from './pages/MerchantDetailPage';
 import { ReviewsPage } from './pages/ReviewsPage';
@@ -64,6 +65,7 @@ function AppRoutes() {
       >
         <Route index element={<DashboardPage />} />
         <Route path="applications" element={<ApplicationsPage />} />
+        <Route path="applications/:applicationId" element={<ApplicationDetailPage />} />
         <Route path="merchants" element={<MerchantsPage />} />
         <Route path="merchants/:merchantId" element={<MerchantDetailPage />} />
         <Route path="reviews" element={<ReviewsPage />} />
