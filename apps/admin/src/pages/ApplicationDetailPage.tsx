@@ -170,11 +170,93 @@ const statusLabel: Record<AppStatus, string> = {
 
 type Tab = 'overview' | 'documents' | 'directors' | 'timeline' | 'notes';
 
+type ModalType = 'approve' | 'reject' | 'request_info' | 'escalate' | 'assign' | null;
+
 export function ApplicationDetailPage() {
   const { applicationId } = useParams();
   const [tab, setTab] = useState<Tab>('overview');
   const [newNote, setNewNote] = useState('');
-  const app = mockApplications[applicationId || ''];
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [modalReason, setModalReason] = useState('');
+  const [modalNote, setModalNote] = useState('');
+  const [assignee, setAssignee] = useState('');
+
+  // Local mutable state for demo
+  const [appStatus, setAppStatus] = useState<AppStatus | null>(null);
+  const [localNotes, setLocalNotes] = useState<{ author: string; time: string; text: string }[]>([]);
+  const [localTimeline, setLocalTimeline] = useState<{ time: string; actor: string; event: string; detail: string }[]>([]);
+  const [initialized, setInitialized] = useState(false);
+
+  const raw = mockApplications[applicationId || ''];
+
+  // Initialize local state from mock data once
+  if (raw && !initialized) {
+    setAppStatus(raw.status);
+    setLocalNotes([...raw.notes]);
+    setLocalTimeline([...raw.timeline]);
+    setInitialized(true);
+  }
+
+  const app = raw ? { ...raw, status: appStatus || raw.status, notes: localNotes, timeline: localTimeline } : null;
+
+  const now = () => new Date().toISOString().replace('T', ' ').slice(0, 16);
+
+  const addTimelineEntry = (event: string, detail: string) => {
+    setLocalTimeline(prev => [{ time: now(), actor: 'You', event, detail }, ...prev]);
+  };
+
+  const addNoteEntry = (text: string) => {
+    setLocalNotes(prev => [{ author: 'You', time: now(), text }, ...prev]);
+  };
+
+  const handleApprove = () => {
+    setAppStatus('approved');
+    addTimelineEntry('Application approved', modalNote || 'Application approved by admin.');
+    if (modalNote) addNoteEntry(modalNote);
+    setActiveModal(null);
+    setModalNote('');
+  };
+
+  const handleReject = () => {
+    if (!modalReason.trim()) return;
+    setAppStatus('rejected');
+    addTimelineEntry('Application rejected', `Reason: ${modalReason}`);
+    addNoteEntry(`Rejected — ${modalReason}`);
+    setActiveModal(null);
+    setModalReason('');
+    setModalNote('');
+  };
+
+  const handleRequestInfo = () => {
+    if (!modalReason.trim()) return;
+    setAppStatus('info_requested');
+    addTimelineEntry('Information requested', modalReason);
+    addNoteEntry(`Requested information: ${modalReason}`);
+    setActiveModal(null);
+    setModalReason('');
+  };
+
+  const handleEscalate = () => {
+    setAppStatus('escalated');
+    addTimelineEntry('Application escalated', modalNote || 'Escalated for senior compliance review.');
+    if (modalNote) addNoteEntry(modalNote);
+    setActiveModal(null);
+    setModalNote('');
+  };
+
+  const handleAssign = () => {
+    if (!assignee) return;
+    addTimelineEntry('Reviewer assigned', `Assigned to ${assignee}`);
+    setActiveModal(null);
+    setAssignee('');
+  };
+
+  const handleAddNote = () => {
+    if (!newNote.trim()) return;
+    addNoteEntry(newNote);
+    addTimelineEntry('Note added', newNote.length > 80 ? newNote.slice(0, 80) + '...' : newNote);
+    setNewNote('');
+  };
 
   if (!app) {
     return (
@@ -214,18 +296,30 @@ export function ApplicationDetailPage() {
           </div>
         </div>
         <div className="admin-page__actions">
+          {!app.assignedTo && app.status !== 'approved' && app.status !== 'rejected' && (
+            <button className="mtrx-btn mtrx-btn--ghost mtrx-btn--sm" onClick={() => setActiveModal('assign')}>Assign</button>
+          )}
           {(app.status === 'pending_review' || app.status === 'under_review') && (
             <>
-              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm">Request Info</button>
-              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm mtrx-btn--danger">Reject</button>
-              <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm">Approve</button>
+              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal('request_info')}>Request Info</button>
+              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal('escalate')}>Escalate</button>
+              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm mtrx-btn--danger" onClick={() => setActiveModal('reject')}>Reject</button>
+              <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={() => setActiveModal('approve')}>Approve</button>
             </>
           )}
           {app.status === 'info_requested' && (
-            <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm">Send Reminder</button>
+            <>
+              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal('request_info')}>Send Reminder</button>
+              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm mtrx-btn--danger" onClick={() => setActiveModal('reject')}>Reject</button>
+              <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={() => setActiveModal('approve')}>Approve</button>
+            </>
           )}
           {app.status === 'escalated' && (
-            <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm">Assign Senior Review</button>
+            <>
+              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal('assign')}>Assign Senior Review</button>
+              <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm mtrx-btn--danger" onClick={() => setActiveModal('reject')}>Reject</button>
+              <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={() => setActiveModal('approve')}>Approve</button>
+            </>
           )}
         </div>
       </div>
@@ -436,7 +530,7 @@ export function ApplicationDetailPage() {
                 rows={3}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
-                <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={() => { alert(`Note added: ${newNote}`); setNewNote(''); }}>
+                <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={handleAddNote} disabled={!newNote.trim()}>
                   Add Note
                 </button>
               </div>
@@ -461,6 +555,186 @@ export function ApplicationDetailPage() {
             </div>
           )}
         </>
+      )}
+
+      {/* ── Action Modals ── */}
+      {activeModal && (
+        <div className="admin-modal-overlay" onClick={() => { setActiveModal(null); setModalReason(''); setModalNote(''); setAssignee(''); }}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+
+            {/* Approve Modal */}
+            {activeModal === 'approve' && (
+              <>
+                <div className="admin-modal__header">
+                  <div className="admin-modal__icon admin-modal__icon--success">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  </div>
+                  <h3>Approve Application</h3>
+                  <button className="admin-modal__close" onClick={() => setActiveModal(null)}>&times;</button>
+                </div>
+                <div className="admin-modal__body">
+                  <p className="admin-modal__text">
+                    Approve <strong>{app.businessName}</strong> for merchant onboarding. This will trigger account activation and welcome communications.
+                  </p>
+                  <div className="admin-modal__field">
+                    <label>Note (optional)</label>
+                    <textarea
+                      className="admin-notes-textarea"
+                      placeholder="Add a note about this approval..."
+                      value={modalNote}
+                      onChange={(e) => setModalNote(e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+                </div>
+                <div className="admin-modal__footer">
+                  <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal(null)}>Cancel</button>
+                  <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={handleApprove}>Confirm Approval</button>
+                </div>
+              </>
+            )}
+
+            {/* Reject Modal */}
+            {activeModal === 'reject' && (
+              <>
+                <div className="admin-modal__header">
+                  <div className="admin-modal__icon admin-modal__icon--danger">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                  </div>
+                  <h3>Reject Application</h3>
+                  <button className="admin-modal__close" onClick={() => setActiveModal(null)}>&times;</button>
+                </div>
+                <div className="admin-modal__body">
+                  <p className="admin-modal__text">
+                    Reject the application from <strong>{app.businessName}</strong>. The applicant will be notified with the reason provided.
+                  </p>
+                  <div className="admin-modal__field">
+                    <label>Rejection Reason <span style={{ color: 'var(--hp-red)' }}>*</span></label>
+                    <select className="admin-select" style={{ width: '100%', marginBottom: 12 }} value={modalReason} onChange={(e) => setModalReason(e.target.value)}>
+                      <option value="">Select a reason...</option>
+                      <option value="Incomplete documentation">Incomplete documentation</option>
+                      <option value="Failed KYC/KYB verification">Failed KYC/KYB verification</option>
+                      <option value="Unable to verify beneficial ownership">Unable to verify beneficial ownership</option>
+                      <option value="Prohibited industry or activity">Prohibited industry or activity</option>
+                      <option value="Sanctions or PEP match">Sanctions or PEP match</option>
+                      <option value="Excessive risk profile">Excessive risk profile</option>
+                      <option value="Fraudulent application">Fraudulent application</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    {modalReason === 'Other' && (
+                      <textarea
+                        className="admin-notes-textarea"
+                        placeholder="Provide details..."
+                        value={modalNote}
+                        onChange={(e) => setModalNote(e.target.value)}
+                        rows={2}
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="admin-modal__footer">
+                  <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal(null)}>Cancel</button>
+                  <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm mtrx-btn--danger" onClick={handleReject} disabled={!modalReason.trim()}>Confirm Rejection</button>
+                </div>
+              </>
+            )}
+
+            {/* Request Info Modal */}
+            {activeModal === 'request_info' && (
+              <>
+                <div className="admin-modal__header">
+                  <div className="admin-modal__icon admin-modal__icon--info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+                  </div>
+                  <h3>Request Information</h3>
+                  <button className="admin-modal__close" onClick={() => setActiveModal(null)}>&times;</button>
+                </div>
+                <div className="admin-modal__body">
+                  <p className="admin-modal__text">
+                    Request additional information from <strong>{app.contactName}</strong> ({app.contactEmail}). They will receive an email with your message.
+                  </p>
+                  <div className="admin-modal__field">
+                    <label>What do you need? <span style={{ color: 'var(--hp-red)' }}>*</span></label>
+                    <textarea
+                      className="admin-notes-textarea"
+                      placeholder="e.g. Please provide your most recent bank statement and a copy of your AML policy..."
+                      value={modalReason}
+                      onChange={(e) => setModalReason(e.target.value)}
+                      rows={4}
+                    />
+                  </div>
+                </div>
+                <div className="admin-modal__footer">
+                  <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal(null)}>Cancel</button>
+                  <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={handleRequestInfo} disabled={!modalReason.trim()}>Send Request</button>
+                </div>
+              </>
+            )}
+
+            {/* Escalate Modal */}
+            {activeModal === 'escalate' && (
+              <>
+                <div className="admin-modal__header">
+                  <div className="admin-modal__icon admin-modal__icon--warning">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+                  </div>
+                  <h3>Escalate Application</h3>
+                  <button className="admin-modal__close" onClick={() => setActiveModal(null)}>&times;</button>
+                </div>
+                <div className="admin-modal__body">
+                  <p className="admin-modal__text">
+                    Escalate <strong>{app.businessName}</strong> for senior compliance review. This flags the application for higher-level assessment.
+                  </p>
+                  <div className="admin-modal__field">
+                    <label>Escalation reason (optional)</label>
+                    <textarea
+                      className="admin-notes-textarea"
+                      placeholder="Why is this being escalated?"
+                      value={modalNote}
+                      onChange={(e) => setModalNote(e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+                </div>
+                <div className="admin-modal__footer">
+                  <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal(null)}>Cancel</button>
+                  <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={handleEscalate}>Confirm Escalation</button>
+                </div>
+              </>
+            )}
+
+            {/* Assign Modal */}
+            {activeModal === 'assign' && (
+              <>
+                <div className="admin-modal__header">
+                  <div className="admin-modal__icon admin-modal__icon--info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>
+                  </div>
+                  <h3>Assign Reviewer</h3>
+                  <button className="admin-modal__close" onClick={() => setActiveModal(null)}>&times;</button>
+                </div>
+                <div className="admin-modal__body">
+                  <p className="admin-modal__text">
+                    Assign a compliance reviewer to <strong>{app.businessName}</strong>.
+                  </p>
+                  <div className="admin-modal__field">
+                    <label>Reviewer <span style={{ color: 'var(--hp-red)' }}>*</span></label>
+                    <select className="admin-select" style={{ width: '100%' }} value={assignee} onChange={(e) => setAssignee(e.target.value)}>
+                      <option value="">Select reviewer...</option>
+                      <option value="James M.">James M. — Compliance Analyst</option>
+                      <option value="Sarah K.">Sarah K. — Senior Compliance</option>
+                      <option value="David R.">David R. — Head of Compliance</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="admin-modal__footer">
+                  <button className="mtrx-btn mtrx-btn--outline mtrx-btn--sm" onClick={() => setActiveModal(null)}>Cancel</button>
+                  <button className="mtrx-btn mtrx-btn--primary mtrx-btn--sm" onClick={handleAssign} disabled={!assignee}>Assign</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
