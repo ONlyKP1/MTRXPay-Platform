@@ -15,32 +15,29 @@ export function LoginPage() {
     setStatus('loading');
     setErrorMsg('');
 
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1500));
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, password: form.password })
+      });
 
-    // Test credentials: test@mtrxpay.com / password123
-    if (form.email === 'test@mtrxpay.com' && form.password === 'password123') {
-      // Save mock user so dashboard ProtectedRoute allows access
-      const mockUser = {
-        id: 'test-merchant-001',
-        email: 'test@mtrxpay.com',
-        phone: '+44 7700 900000',
-        firstName: 'Test',
-        lastName: 'Merchant',
-        emailVerified: true,
-        phoneVerified: true,
-        isKnownCustomer: true,
-        kycStatus: 'approved',
-        createdAt: new Date().toISOString(),
-      };
-      localStorage.setItem('mtrx_user', JSON.stringify(mockUser));
-      setStatus('success');
-      setTimeout(() => window.location.href = '/dashboard', 1200);
-      return;
+      const data = await response.json();
+
+      if (data.success) {
+        // Save token and user to localStorage
+        localStorage.setItem('mtrx_token', data.data.token);
+        localStorage.setItem('mtrx_user', JSON.stringify(data.data.user));
+        setStatus('success');
+        setTimeout(() => window.location.href = '/dashboard', 1200);
+      } else {
+        setStatus('error');
+        setErrorMsg(data.error?.message || 'Invalid email or password. Please try again.');
+      }
+    } catch (error) {
+      setStatus('error');
+      setErrorMsg('Unable to connect to server. Please try again.');
     }
-
-    setStatus('error');
-    setErrorMsg('Invalid email or password. Please try again.');
   };
 
   return (
