@@ -15,6 +15,7 @@ const kycModule = require('../modules/kyc');
 const webhooksModule = require('../modules/webhooks');
 const transactionsModule = require('../modules/transactions');
 const devWebhookRoutes = require('../modules/webhooks/dev.routes');
+const providersRoutes = require('./providers.routes');
 
 // Health check
 router.use(healthRoutes);
@@ -30,6 +31,7 @@ router.use(onboardingModule.routes);
 router.use(documentsModule.routes);
 router.use(kycModule.routes);
 router.use(transactionsModule.routes);
+router.use('/api/providers', providersRoutes);
 router.use(adminModule.routes);
 
 // Dev routes (non-production only)
