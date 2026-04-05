@@ -30,6 +30,7 @@ import { HelpPage } from './pages/HelpPage';
 import { TrustLevelPage } from './pages/TrustLevelPage';
 import { MtrxWelcomePage } from './pages/MtrxWelcomePage';
 import { PaymentTypesPage } from './pages/PaymentTypesPage';
+import RouteSelectorDemo from './pages/RouteSelectorDemo';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -64,6 +65,7 @@ function AppRoutes() {
       <Route path="/faq" element={<PublicLayout><FAQPage /></PublicLayout>} />
       <Route path="/technology" element={<PublicLayout><TechnologyPage /></PublicLayout>} />
       <Route path="/test" element={<MtrxWelcomePage />} />
+      <Route path="/demo/routes" element={<RouteSelectorDemo />} />
 
       {/* Auth Routes */}
       <Route path="/login" element={<LoginPage />} />
