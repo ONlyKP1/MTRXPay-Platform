@@ -26,6 +26,8 @@ import { SubscriptionManagementPage } from './pages/SubscriptionManagementPage';
 import { IndustrySelectPage } from './pages/IndustrySelectPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { TransactionDetailPage } from './pages/TransactionDetailPage';
+import { BalancesPage } from './pages/BalancesPage';
+import { SettingsPage } from './pages/SettingsPage';
 import { CompliancePage } from './pages/CompliancePage';
 import { HelpPage } from './pages/HelpPage';
 import { TrustLevelPage } from './pages/TrustLevelPage';
@@ -198,6 +200,23 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <TrustLevelPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/balances"
+        element={
+          <ProtectedRoute>
+            <BalancesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <SettingsPage />
           </ProtectedRoute>
         }
       />

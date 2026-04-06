@@ -65,12 +65,14 @@ const icons = {
 
 const navItems = [
   { label: 'Dashboard', icon: icons.dashboard, to: '/dashboard' },
+  { label: 'Balances', icon: icons.payouts, to: '/balances' },
   { label: 'Transactions', icon: icons.transactions, to: '/transactions' },
   { label: 'Payment Types', icon: icons.paymentTypes, to: '/payment-types' },
   { label: 'Payouts', icon: icons.payouts, to: '/payouts' },
   { label: 'Subscriptions', icon: icons.subscriptions, to: '/subscriptions' },
   { label: 'Compliance', icon: icons.compliance, to: '/compliance' },
   { label: 'Trust Level', icon: icons.trust, to: '/trust' },
+  { label: 'Settings', icon: icons.help, to: '/settings' },
   { label: 'Help', icon: icons.help, to: '/help' },
 ];
 
