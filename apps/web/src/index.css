@@ -12364,12 +12364,12 @@ select.form-input {
   font-size: 0.65rem;
 }
 .hp-dash__hero-balance-amount {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.4rem;
-  font-weight: 700;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
   color: #fff;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 .hp-dash__hero-balance-sub {
   display: flex;
@@ -12443,11 +12443,12 @@ select.form-input {
 }
 .hp-dash__kpi-card-value {
   display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #fff;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 .hp-dash__kpi-card-value--green {
   color: #22c55e;
@@ -13425,10 +13426,10 @@ select.form-input {
 .hp-txn-detail__amount {
   font-family: 'Work Sans', sans-serif;
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #fff;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 .hp-txn-detail__currency {
   display: block;
