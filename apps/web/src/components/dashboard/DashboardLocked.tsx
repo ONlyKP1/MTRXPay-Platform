@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { MerchantStatus } from '../../types/auth';
+import { ApplicationTimeline } from '../common/ApplicationTimeline';
 
 interface Props {
   status: MerchantStatus;
@@ -102,23 +103,9 @@ export function DashboardLocked({ status, firstName }: Props) {
 
         <p className="dash-locked__message">{config.message}</p>
 
-        {!isTerminal && (
-          <div className="dash-locked__stepper">
-            {steps.map((s, i) => (
-              <div key={s.label} className="dash-locked__step">
-                <div className={`dash-locked__step-dot${s.done ? ' dash-locked__step-dot--done' : s.active ? ' dash-locked__step-dot--active' : ''}`}>
-                  {s.done ? (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                  ) : (
-                    <span>{i + 1}</span>
-                  )}
-                </div>
-                <span className={`dash-locked__step-label${s.done ? ' dash-locked__step-label--done' : s.active ? ' dash-locked__step-label--active' : ''}`}>{s.label}</span>
-                {i < steps.length - 1 && <div className={`dash-locked__step-line${s.done ? ' dash-locked__step-line--done' : ''}`} />}
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="dash-locked__timeline-wrap">
+          <ApplicationTimeline status={status} />
+        </div>
 
         {config.cta && config.ctaRoute && (
           <button className="dash-locked__cta" onClick={() => navigate(config.ctaRoute!)}>

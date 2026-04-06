@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
+import { EmptyState } from '../components/common/EmptyState';
 
 type SubStatus = 'active' | 'paused' | 'cancelled' | 'past_due' | 'trialing';
 type SubInterval = 'weekly' | 'monthly' | 'quarterly' | 'yearly';
@@ -272,9 +273,15 @@ export function SubscriptionManagementPage() {
           </table>
         </div>
         {filteredSubscribers.length === 0 && (
-          <div className="hp-dash__empty">
-            <p>No subscribers found matching your filters.</p>
-          </div>
+          <EmptyState
+            title="No Subscribers Found"
+            message="No subscribers match your current filters. Try adjusting your search criteria or status filter."
+            icon={
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
+              </svg>
+            }
+          />
         )}
       </section>
 

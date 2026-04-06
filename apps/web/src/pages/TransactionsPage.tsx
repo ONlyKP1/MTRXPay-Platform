@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
+import { EmptyState } from '../components/common/EmptyState';
 
 type Currency = 'GBP' | 'EUR' | 'USD' | 'AED';
 type TransactionStatus = 'completed' | 'pending' | 'failed' | 'refunded';
@@ -185,9 +186,15 @@ export function TransactionsPage() {
           </table>
         </div>
         {filteredTransactions.length === 0 && (
-          <div className="hp-dash__empty">
-            <p>No transactions found matching your filters.</p>
-          </div>
+          <EmptyState
+            title="No Transactions Found"
+            message="No transactions match your current filters. Try adjusting your search criteria or date range."
+            icon={
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h7" /><line x1="1" y1="10" x2="23" y2="10" /><circle cx="18" cy="18" r="3" /><path d="M20.2 20.2L22 22" />
+              </svg>
+            }
+          />
         )}
         {filteredTransactions.length > 0 && (
           <div className="hp-dash__pagination">
