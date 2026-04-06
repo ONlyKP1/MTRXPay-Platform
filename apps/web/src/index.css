@@ -11679,6 +11679,33 @@ select.form-input {
   box-shadow: 0 0 0 3px rgba(197,164,78,0.1);
   background: rgba(255,255,255,0.05);
 }
+/* Password toggle */
+.hp-auth__password-wrap {
+  position: relative;
+}
+.hp-auth__password-wrap input {
+  padding-right: 44px;
+}
+.hp-auth__password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--hp-text-muted);
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+}
+.hp-auth__password-toggle:hover {
+  opacity: 1;
+  color: var(--hp-gold);
+}
+
 .hp-auth__form .hp-btn--primary {
   margin-top: 4px;
   padding: 14px 32px;
