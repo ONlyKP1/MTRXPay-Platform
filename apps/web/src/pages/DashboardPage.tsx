@@ -211,41 +211,85 @@ export function DashboardPage() {
 
   return (
     <DashboardLayout unreadCount={unreadCount}>
-      {/* Header */}
-      <header className="hp-dash__header">
-        <div>
-          <h1 className="hp-dash__welcome">{getGreeting()}, {user?.firstName}</h1>
-          <p className="hp-dash__date">{today} &middot; {time}</p>
+      {/* ═══ HERO LANDING SECTION ═══ */}
+      <header className="hp-dash__hero">
+        <div className="hp-dash__hero-top">
+          <div>
+            <p className="hp-dash__hero-eyebrow">Merchant Dashboard</p>
+            <h1 className="hp-dash__hero-heading">{getGreeting()}, <span className="hp-dash__hero-accent">{user?.firstName}</span></h1>
+            <p className="hp-dash__hero-date">{today}</p>
+          </div>
+          <div className="hp-dash__hero-balance">
+            <div className="hp-dash__hero-balance-label">
+              <span>Available Balance</span>
+              <div className="hp-dash__currency-selector hp-dash__currency-selector--compact">
+                {(['GBP', 'EUR', 'USD', 'AED'] as Currency[]).map((c) => (
+                  <button
+                    key={c}
+                    className={`hp-dash__currency-btn${selectedCurrency === c ? ' hp-dash__currency-btn--active' : ''}`}
+                    onClick={() => setSelectedCurrency(c)}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="hp-dash__hero-balance-amount">
+              {formatCurrency(mockBalances[selectedCurrency])}
+            </div>
+            <div className="hp-dash__hero-balance-sub">
+              <span>Escrow: {formatCurrency(mockEscrowTotal[selectedCurrency])}</span>
+              <span className="hp-dash__hero-balance-divider">|</span>
+              <span>Processed: {formatCurrency(mockMetrics.totalProcessed, selectedCurrency)}</span>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* Balance Card */}
-      <section className="hp-dash__balance">
-        <div className="hp-dash__balance-top">
-          <span className="hp-dash__section-label">Available Balance</span>
-          <div className="hp-dash__currency-selector">
-            {(['GBP', 'EUR', 'USD', 'AED'] as Currency[]).map((c) => (
-              <button
-                key={c}
-                className={`hp-dash__currency-btn${selectedCurrency === c ? ' hp-dash__currency-btn--active' : ''}`}
-                onClick={() => setSelectedCurrency(c)}
-              >
-                {c}
-              </button>
-            ))}
+      {/* ═══ KPI SUMMARY CARDS ═══ */}
+      <section className="hp-dash__kpi-grid">
+        <div className="hp-dash__kpi-card hp-dash__kpi-card--primary">
+          <div className="hp-dash__kpi-card-icon">{icons.wallet}</div>
+          <div className="hp-dash__kpi-card-content">
+            <span className="hp-dash__kpi-card-label">Today's Revenue</span>
+            <span className="hp-dash__kpi-card-value">{formatCurrency(todaysRevenue, 'GBP')}</span>
+          </div>
+          <span className="hp-dash__kpi-card-trend hp-dash__kpi-card-trend--up">{icons.arrowUp} 12%</span>
+        </div>
+        <div className="hp-dash__kpi-card">
+          <div className="hp-dash__kpi-card-icon">{icons.calendar}</div>
+          <div className="hp-dash__kpi-card-content">
+            <span className="hp-dash__kpi-card-label">Next Payout</span>
+            <span className="hp-dash__kpi-card-value">{formatCurrency(mockMetrics.nextScheduledPayment, selectedCurrency)}</span>
+          </div>
+          <span className="hp-dash__kpi-card-sub">{formatDate(mockMetrics.nextPaymentDate)}</span>
+        </div>
+        <div className="hp-dash__kpi-card">
+          <div className="hp-dash__kpi-card-icon">{icons.shield}</div>
+          <div className="hp-dash__kpi-card-content">
+            <span className="hp-dash__kpi-card-label">Success Rate</span>
+            <span className="hp-dash__kpi-card-value hp-dash__kpi-card-value--green">97.3%</span>
           </div>
         </div>
-        <div className="hp-dash__balance-amount">
-          {formatCurrency(mockBalances[selectedCurrency])}
-        </div>
-        <div className="hp-dash__balance-footer">
-          <div className="hp-dash__balance-escrow">
-            <span>In Escrow (72hr hold):</span>
-            <span className="hp-dash__balance-escrow-val">{formatCurrency(mockEscrowTotal[selectedCurrency])}</span>
+        <div className="hp-dash__kpi-card">
+          <div className="hp-dash__kpi-card-icon">{icons.chart}</div>
+          <div className="hp-dash__kpi-card-content">
+            <span className="hp-dash__kpi-card-label">Avg Transaction</span>
+            <span className="hp-dash__kpi-card-value">{formatCurrency(708.60, 'GBP')}</span>
           </div>
-          <div className="hp-dash__balance-processed">
-            <span className="hp-dash__balance-processed-label">Total Processed</span>
-            <span className="hp-dash__balance-processed-val">{formatCurrency(mockMetrics.totalProcessed, selectedCurrency)}</span>
+        </div>
+        <div className="hp-dash__kpi-card">
+          <div className="hp-dash__kpi-card-icon">{icons.alertTriangle}</div>
+          <div className="hp-dash__kpi-card-content">
+            <span className="hp-dash__kpi-card-label">Chargeback Rate</span>
+            <span className="hp-dash__kpi-card-value hp-dash__kpi-card-value--green">0.4%</span>
+          </div>
+        </div>
+        <div className="hp-dash__kpi-card">
+          <div className="hp-dash__kpi-card-icon">{icons.creditCard}</div>
+          <div className="hp-dash__kpi-card-content">
+            <span className="hp-dash__kpi-card-label">Active Customers</span>
+            <span className="hp-dash__kpi-card-value">1,247</span>
           </div>
         </div>
       </section>
@@ -337,46 +381,6 @@ export function DashboardPage() {
           formatCurrency={(amount) => formatCurrency(amount, 'GBP')}
         />
       </section>
-
-      {/* Metrics Grid */}
-      <section className="hp-dash__metrics">
-        <div className="hp-dash__metric-card">
-          <div className="hp-dash__metric-icon">{icons.wallet}</div>
-          <span className="hp-dash__metric-label">Today's Revenue</span>
-          <span className="hp-dash__metric-value">{formatCurrency(todaysRevenue, 'GBP')}</span>
-          <span className="hp-dash__trend hp-dash__trend--up">{icons.arrowUp} 12%</span>
-        </div>
-        <div className="hp-dash__metric-card">
-          <div className="hp-dash__metric-icon">{icons.calendar}</div>
-          <span className="hp-dash__metric-label">Next Payout</span>
-          <span className="hp-dash__metric-value">{formatCurrency(mockMetrics.nextScheduledPayment, selectedCurrency)}</span>
-          <span className="hp-dash__metric-sub">{formatDate(mockMetrics.nextPaymentDate)}</span>
-        </div>
-        <div className="hp-dash__metric-card">
-          <div className="hp-dash__metric-icon">{icons.wallet}</div>
-          <span className="hp-dash__metric-label">In Escrow</span>
-          <span className="hp-dash__metric-value">{formatCurrency(mockEscrowTotal[selectedCurrency])}</span>
-          <span className="hp-dash__trend hp-dash__trend--down">{icons.arrowDown} 3%</span>
-        </div>
-        <div className="hp-dash__metric-card hp-dash__metric-card--action" onClick={() => navigate('/payouts')}>
-          <div className="hp-dash__metric-icon">{icons.chart}</div>
-          <span className="hp-dash__metric-label">Request Payout</span>
-          <span className="hp-dash__metric-value">Withdraw</span>
-          <span className="hp-dash__metric-sub">To your bank account</span>
-        </div>
-      </section>
-
-      {/* KPI Row */}
-      <div className="hp-dash__kpi-row">
-        {mockKPIs.map((kpi) => (
-          <div key={kpi.label} className="hp-dash__kpi-item">
-            <span className="hp-dash__kpi-label">{kpi.label}</span>
-            <span className={`hp-dash__kpi-value${kpi.variant ? ` hp-dash__kpi-value--${kpi.variant}` : ''}`}>
-              {kpi.value}
-            </span>
-          </div>
-        ))}
-      </div>
 
       {/* Alerts */}
       <section className="hp-dash__alerts">
