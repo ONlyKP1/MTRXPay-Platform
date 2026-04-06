@@ -124,14 +124,14 @@ export function DashboardLocked({ status, firstName }: Props) {
       <div className="dash-locked__features">
         {lockedFeatures.map((f) => (
           <div key={f.label} className="dash-locked__feature">
-            <div className="dash-locked__feature-icon">{featureIcons[f.icon]}</div>
-            <div>
-              <h4 className="dash-locked__feature-title">{f.label}</h4>
-              <p className="dash-locked__feature-desc">{f.desc}</p>
+            <div className="dash-locked__feature-icon-wrap">
+              <div className="dash-locked__feature-icon">{featureIcons[f.icon]}</div>
+              <div className="dash-locked__feature-lock">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+              </div>
             </div>
-            <div className="dash-locked__feature-lock">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
-            </div>
+            <h4 className="dash-locked__feature-title">{f.label}</h4>
+            <p className="dash-locked__feature-desc">{f.desc}</p>
           </div>
         ))}
       </div>
