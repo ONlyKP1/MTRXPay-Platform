@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { EmptyState } from '../components/common/EmptyState';
 
@@ -40,6 +41,7 @@ const formatDate = (iso: string) => {
 };
 
 export function TransactionsPage() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<TransactionStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<TransactionType | 'all'>('all');
@@ -164,7 +166,7 @@ export function TransactionsPage() {
             </thead>
             <tbody>
               {filteredTransactions.map((txn) => (
-                <tr key={txn.id}>
+                <tr key={txn.id} className="hp-dash__table-row--clickable" onClick={() => navigate(`/transactions/${txn.id}`)}>
                   <td className="hp-dash__txn-id">{txn.id}</td>
                   <td>
                     <div>{formatDate(txn.date)}</div>

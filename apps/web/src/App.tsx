@@ -25,6 +25,7 @@ import { PayoutsPage } from './pages/SubscriptionsPage';
 import { SubscriptionManagementPage } from './pages/SubscriptionManagementPage';
 import { IndustrySelectPage } from './pages/IndustrySelectPage';
 import { TransactionsPage } from './pages/TransactionsPage';
+import { TransactionDetailPage } from './pages/TransactionDetailPage';
 import { CompliancePage } from './pages/CompliancePage';
 import { HelpPage } from './pages/HelpPage';
 import { TrustLevelPage } from './pages/TrustLevelPage';
@@ -165,6 +166,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <TransactionsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/transactions/:id"
+        element={
+          <ProtectedRoute>
+            <TransactionDetailPage />
           </ProtectedRoute>
         }
       />
