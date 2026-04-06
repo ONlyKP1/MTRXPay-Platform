@@ -13423,11 +13423,12 @@ select.form-input {
   flex-shrink: 0;
 }
 .hp-txn-detail__amount {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 1.8rem;
   font-weight: 700;
   color: #fff;
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 .hp-txn-detail__currency {
   display: block;
