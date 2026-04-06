@@ -16286,3 +16286,101 @@ select.form-input {
   .hp-settings__form-grid { grid-template-columns: 1fr; }
   .hp-dash__currency-tabs { flex-wrap: nowrap; }
 }
+
+/* ══════════════════════════════════════════════
+   Sortable Table Headers & Pagination Controls
+   ══════════════════════════════════════════════ */
+.hp-dash__th--sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+.hp-dash__th--sortable:hover {
+  color: var(--hp-gold);
+}
+.hp-dash__sort-arrow {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 0.7rem;
+  color: var(--hp-gold);
+}
+.hp-dash__pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.hp-dash__pagination-info {
+  font-size: 0.78rem;
+  color: var(--hp-text-muted);
+}
+.hp-dash__pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hp-dash__page-size {
+  padding: 5px 10px;
+  background: var(--hp-bg-raised);
+  border: 1px solid var(--hp-border);
+  border-radius: 8px;
+  color: var(--hp-text-muted);
+  font-size: 0.75rem;
+  font-family: inherit;
+}
+.hp-dash__page-btn {
+  padding: 5px 14px;
+  background: transparent;
+  border: 1px solid var(--hp-border);
+  border-radius: 8px;
+  color: var(--hp-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.hp-dash__page-btn:hover:not(:disabled) {
+  border-color: var(--hp-gold);
+  color: var(--hp-gold);
+}
+.hp-dash__page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.hp-dash__page-current {
+  font-size: 0.75rem;
+  color: var(--hp-text-muted);
+  min-width: 48px;
+  text-align: center;
+}
+.hp-dash__filter-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--hp-text-muted);
+  margin-bottom: 4px;
+}
+
+/* Webhook meta */
+.hp-settings__webhook-meta {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--hp-text-muted);
+  margin-top: 4px;
+  font-family: 'Work Sans', sans-serif;
+}
+
+/* Danger outline button */
+.hp-settings__btn-outline--danger {
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+.hp-settings__btn-outline--danger:hover {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+}

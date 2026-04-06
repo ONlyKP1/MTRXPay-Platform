@@ -12,7 +12,8 @@ export type BadgeStatus =
   | 'paused'
   | 'cancelled'
   | 'past_due'
-  | 'trialing';
+  | 'trialing'
+  | 'refunded';
 
 const labels: Record<BadgeStatus, string> = {
   draft: 'Draft',
@@ -29,6 +30,7 @@ const labels: Record<BadgeStatus, string> = {
   cancelled: 'Cancelled',
   past_due: 'Past Due',
   trialing: 'Trial',
+  refunded: 'Refunded',
 };
 
 const variants: Record<BadgeStatus, string> = {
@@ -46,6 +48,7 @@ const variants: Record<BadgeStatus, string> = {
   cancelled: 'red',
   past_due: 'red',
   trialing: 'blue',
+  refunded: 'gold',
 };
 
 interface StatusBadgeProps {

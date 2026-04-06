@@ -12,13 +12,29 @@ const tabs: { key: SettingsTab; label: string }[] = [
   { key: 'api', label: 'API Keys' },
 ];
 
+const MOCK_KEYS = {
+  publishable: 'pk_live_mtrx_a1b2c3d4e5f6g7h8',
+  secret: 'sk_live_mtrx_x9y8z7w6v5u4t3s2',
+  webhook: 'whsec_mtrx_q1w2e3r4t5y6u7i8',
+};
+
 export function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
   const [saved, setSaved] = useState(false);
+  const [showSecret, setShowSecret] = useState(false);
+  const [showWebhookSecret, setShowWebhookSecret] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [showRollConfirm, setShowRollConfirm] = useState(false);
 
   const handleSave = () => {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const copyKey = (key: string, label: string) => {
+    navigator.clipboard.writeText(key);
+    setCopiedKey(label);
+    setTimeout(() => setCopiedKey(null), 2000);
   };
 
   return (
@@ -212,37 +228,89 @@ export function SettingsPage() {
                 <div className="hp-settings__api-key">
                   <span className="hp-settings__api-key-label">Publishable Key</span>
                   <div className="hp-settings__api-key-value">
-                    <code>pk_live_mtrx_a1b2c3d4e5f6g7h8</code>
-                    <button className="hp-settings__copy-btn">Copy</button>
+                    <code>{MOCK_KEYS.publishable}</code>
+                    <button className="hp-settings__copy-btn" onClick={() => copyKey(MOCK_KEYS.publishable, 'pub')}>
+                      {copiedKey === 'pub' ? 'Copied!' : 'Copy'}
+                    </button>
                   </div>
                 </div>
                 <div className="hp-settings__api-key">
                   <span className="hp-settings__api-key-label">Secret Key</span>
                   <div className="hp-settings__api-key-value">
-                    <code>sk_live_mtrx_••••••••••••••••</code>
-                    <button className="hp-settings__copy-btn">Reveal</button>
+                    <code>{showSecret ? MOCK_KEYS.secret : 'sk_live_mtrx_\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022'}</code>
+                    <button className="hp-settings__copy-btn" onClick={() => showSecret ? copyKey(MOCK_KEYS.secret, 'sec') : setShowSecret(true)}>
+                      {showSecret ? (copiedKey === 'sec' ? 'Copied!' : 'Copy') : 'Reveal'}
+                    </button>
+                    {showSecret && <button className="hp-settings__copy-btn" onClick={() => setShowSecret(false)}>Hide</button>}
                   </div>
                 </div>
                 <div className="hp-settings__api-key">
                   <span className="hp-settings__api-key-label">Webhook Secret</span>
                   <div className="hp-settings__api-key-value">
-                    <code>whsec_mtrx_••••••••••••••••</code>
-                    <button className="hp-settings__copy-btn">Reveal</button>
+                    <code>{showWebhookSecret ? MOCK_KEYS.webhook : 'whsec_mtrx_\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022'}</code>
+                    <button className="hp-settings__copy-btn" onClick={() => showWebhookSecret ? copyKey(MOCK_KEYS.webhook, 'wh') : setShowWebhookSecret(true)}>
+                      {showWebhookSecret ? (copiedKey === 'wh' ? 'Copied!' : 'Copy') : 'Reveal'}
+                    </button>
+                    {showWebhookSecret && <button className="hp-settings__copy-btn" onClick={() => setShowWebhookSecret(false)}>Hide</button>}
                   </div>
                 </div>
               </div>
-              <button className="hp-settings__btn-outline" style={{ marginTop: 16 }}>Roll API Keys</button>
+              <button className="hp-settings__btn-outline hp-settings__btn-outline--danger" style={{ marginTop: 16 }} onClick={() => setShowRollConfirm(true)}>Roll API Keys</button>
+
+              {showRollConfirm && (
+                <div className="hp-dash__modal-overlay" onClick={() => setShowRollConfirm(false)}>
+                  <div className="hp-dash__modal" onClick={(e) => e.stopPropagation()}>
+                    <div className="hp-dash__modal-header">
+                      <h3>Roll API Keys</h3>
+                      <button className="hp-dash__modal-close" onClick={() => setShowRollConfirm(false)}>&times;</button>
+                    </div>
+                    <div className="hp-dash__modal-body">
+                      <p style={{ color: '#ef4444', fontWeight: 600, marginBottom: 8 }}>This action is irreversible.</p>
+                      <p style={{ color: 'var(--hp-text-muted)', fontSize: '0.85rem', lineHeight: 1.6 }}>
+                        Rolling your API keys will immediately invalidate your current publishable and secret keys.
+                        All integrations using the current keys will stop working. You will need to update your keys in all environments.
+                      </p>
+                    </div>
+                    <div className="hp-dash__modal-footer">
+                      <button className="hp-dash__modal-cancel" onClick={() => setShowRollConfirm(false)}>Cancel</button>
+                      <button className="hp-dash__modal-send" style={{ background: '#ef4444' }} onClick={() => { alert('API keys rolled (mock)'); setShowRollConfirm(false); }}>Roll Keys</button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="hp-settings__card">
               <h3 className="hp-settings__card-title">Webhook Endpoints</h3>
               <p className="hp-settings__card-desc">Configure where MTRX sends event notifications.</p>
               <div className="hp-settings__webhook-list">
                 <div className="hp-settings__webhook">
-                  <code>https://acmedigital.co.uk/webhooks/mtrx</code>
-                  <StatusBadge status="active" size="sm" />
+                  <div>
+                    <code>https://acmedigital.co.uk/webhooks/mtrx</code>
+                    <span className="hp-settings__webhook-meta">Last delivery: 14 Mar 2026, 14:32 - 200 OK</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <StatusBadge status="active" size="sm" />
+                    <button className="hp-settings__copy-btn">Test</button>
+                  </div>
                 </div>
               </div>
               <button className="hp-settings__add-btn" style={{ marginTop: 12 }}>+ Add Endpoint</button>
+            </div>
+            <div className="hp-settings__card">
+              <h3 className="hp-settings__card-title">Subscribed Events</h3>
+              <p className="hp-settings__card-desc">Choose which events are sent to your webhook endpoints.</p>
+              <div className="hp-settings__toggle-list">
+                {[
+                  { label: 'payment.completed', desc: 'Fired when a payment is successfully captured', defaultOn: true },
+                  { label: 'payment.failed', desc: 'Fired when a payment attempt fails', defaultOn: true },
+                  { label: 'refund.created', desc: 'Fired when a refund is issued', defaultOn: true },
+                  { label: 'chargeback.opened', desc: 'Fired when a chargeback dispute is opened', defaultOn: true },
+                  { label: 'payout.settled', desc: 'Fired when a payout is settled to your bank', defaultOn: false },
+                  { label: 'subscription.updated', desc: 'Fired when a subscription status changes', defaultOn: false },
+                ].map((item) => (
+                  <ToggleRow key={item.label} label={item.label} desc={item.desc} defaultOn={item.defaultOn} />
+                ))}
+              </div>
             </div>
           </div>
         )}

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { EmptyState } from '../components/common/EmptyState';
+import { StatusBadge } from '../components/common/StatusBadge';
 
 type Currency = 'GBP' | 'EUR' | 'USD' | 'AED';
 type TransactionStatus = 'completed' | 'pending' | 'failed' | 'refunded';
@@ -45,8 +46,13 @@ export function TransactionsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<TransactionStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<TransactionType | 'all'>('all');
+  const [currencyFilter, setCurrencyFilter] = useState<Currency | 'all'>('all');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [sortCol, setSortCol] = useState<'date' | 'amount' | 'customer' | 'status'>('date');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const formatCurrency = (amount: number, currency: Currency) => {
     return new Intl.NumberFormat(currencyLocales[currency], {
@@ -57,21 +63,49 @@ export function TransactionsPage() {
     }).format(amount);
   };
 
-  const filteredTransactions = mockTransactions.filter(txn => {
-    const matchesSearch =
-      txn.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      txn.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      txn.reference.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || txn.status === statusFilter;
-    const matchesType = typeFilter === 'all' || txn.type === typeFilter;
-    const matchesDateFrom = !dateFrom || txn.date >= dateFrom;
-    const matchesDateTo = !dateTo || txn.date <= dateTo;
-    return matchesSearch && matchesStatus && matchesType && matchesDateFrom && matchesDateTo;
-  });
+  const filteredTransactions = useMemo(() => {
+    let result = mockTransactions.filter(txn => {
+      const matchesSearch =
+        txn.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        txn.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        txn.reference.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || txn.status === statusFilter;
+      const matchesType = typeFilter === 'all' || txn.type === typeFilter;
+      const matchesCurrency = currencyFilter === 'all' || txn.currency === currencyFilter;
+      const matchesDateFrom = !dateFrom || txn.date >= dateFrom;
+      const matchesDateTo = !dateTo || txn.date <= dateTo;
+      return matchesSearch && matchesStatus && matchesType && matchesCurrency && matchesDateFrom && matchesDateTo;
+    });
+    // Sort
+    result = [...result].sort((a, b) => {
+      let cmp = 0;
+      if (sortCol === 'date') cmp = a.date.localeCompare(b.date) || a.time.localeCompare(b.time);
+      else if (sortCol === 'amount') cmp = a.amount - b.amount;
+      else if (sortCol === 'customer') cmp = a.customer.localeCompare(b.customer);
+      else if (sortCol === 'status') cmp = a.status.localeCompare(b.status);
+      return sortDir === 'desc' ? -cmp : cmp;
+    });
+    return result;
+  }, [searchTerm, statusFilter, typeFilter, currencyFilter, dateFrom, dateTo, sortCol, sortDir]);
+
+  const totalPages = Math.ceil(filteredTransactions.length / pageSize);
+  const paginatedTransactions = filteredTransactions.slice((page - 1) * pageSize, page * pageSize);
 
   const totalAmount = filteredTransactions
     .filter(t => t.type === 'payment' && t.status === 'completed')
     .reduce((sum, t) => sum + t.amount, 0);
+
+  const toggleSort = (col: typeof sortCol) => {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortCol(col); setSortDir('desc'); }
+    setPage(1);
+  };
+
+  const SortArrow = ({ col }: { col: typeof sortCol }) => (
+    sortCol === col ? (
+      <span className="hp-dash__sort-arrow">{sortDir === 'asc' ? '\u2191' : '\u2193'}</span>
+    ) : null
+  );
 
   return (
     <DashboardLayout>
@@ -133,16 +167,27 @@ export function TransactionsPage() {
             </select>
           </div>
           <div className="hp-dash__field hp-dash__field--inline">
-            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+            <select value={currencyFilter} onChange={(e) => { setCurrencyFilter(e.target.value as Currency | 'all'); setPage(1); }}>
+              <option value="all">All Currencies</option>
+              <option value="GBP">GBP</option>
+              <option value="EUR">EUR</option>
+              <option value="USD">USD</option>
+              <option value="AED">AED</option>
+            </select>
           </div>
           <div className="hp-dash__field hp-dash__field--inline">
-            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+            <label className="hp-dash__filter-label">From</label>
+            <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} />
+          </div>
+          <div className="hp-dash__field hp-dash__field--inline">
+            <label className="hp-dash__filter-label">To</label>
+            <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} />
           </div>
           <button className="hp-dash__btn-outline">Export CSV</button>
-          {(searchTerm || statusFilter !== 'all' || typeFilter !== 'all' || dateFrom || dateTo) && (
+          {(searchTerm || statusFilter !== 'all' || typeFilter !== 'all' || currencyFilter !== 'all' || dateFrom || dateTo) && (
             <button
               className="hp-dash__btn-outline hp-dash__btn-outline--clear"
-              onClick={() => { setSearchTerm(''); setStatusFilter('all'); setTypeFilter('all'); setDateFrom(''); setDateTo(''); }}
+              onClick={() => { setSearchTerm(''); setStatusFilter('all'); setTypeFilter('all'); setCurrencyFilter('all'); setDateFrom(''); setDateTo(''); setPage(1); }}
             >
               Clear Filters
             </button>
@@ -157,15 +202,15 @@ export function TransactionsPage() {
             <thead>
               <tr>
                 <th>Transaction ID</th>
-                <th>Date & Time</th>
-                <th>Customer</th>
+                <th className="hp-dash__th--sortable" onClick={() => toggleSort('date')}>Date & Time <SortArrow col="date" /></th>
+                <th className="hp-dash__th--sortable" onClick={() => toggleSort('customer')}>Customer <SortArrow col="customer" /></th>
                 <th>Type</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th className="hp-dash__th--sortable" onClick={() => toggleSort('amount')}>Amount <SortArrow col="amount" /></th>
+                <th className="hp-dash__th--sortable" onClick={() => toggleSort('status')}>Status <SortArrow col="status" /></th>
               </tr>
             </thead>
             <tbody>
-              {filteredTransactions.map((txn) => (
+              {paginatedTransactions.map((txn) => (
                 <tr key={txn.id} className="hp-dash__table-row--clickable" onClick={() => navigate(`/transactions/${txn.id}`)}>
                   <td className="hp-dash__txn-id">{txn.id}</td>
                   <td>
@@ -181,7 +226,7 @@ export function TransactionsPage() {
                     {txn.type === 'refund' || txn.type === 'chargeback' ? '-' : ''}
                     {formatCurrency(txn.amount, txn.currency)}
                   </td>
-                  <td><span className={`hp-dash__status hp-dash__status--${txn.status}`}>{txn.status}</span></td>
+                  <td><StatusBadge status={txn.status} size="sm" /></td>
                 </tr>
               ))}
             </tbody>
@@ -200,7 +245,19 @@ export function TransactionsPage() {
         )}
         {filteredTransactions.length > 0 && (
           <div className="hp-dash__pagination">
-            Showing 1–{filteredTransactions.length} of {mockTransactions.length} transactions
+            <div className="hp-dash__pagination-info">
+              Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filteredTransactions.length)} of {filteredTransactions.length} transactions
+            </div>
+            <div className="hp-dash__pagination-controls">
+              <select value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} className="hp-dash__page-size">
+                <option value={10}>10 / page</option>
+                <option value={25}>25 / page</option>
+                <option value={50}>50 / page</option>
+              </select>
+              <button className="hp-dash__page-btn" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>Prev</button>
+              <span className="hp-dash__page-current">{page} / {totalPages || 1}</span>
+              <button className="hp-dash__page-btn" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>Next</button>
+            </div>
           </div>
         )}
       </section>

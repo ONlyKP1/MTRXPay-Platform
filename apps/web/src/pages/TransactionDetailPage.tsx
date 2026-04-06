@@ -92,10 +92,6 @@ export function TransactionDetailPage() {
     }).format(amount);
   };
 
-  const statusMap: Record<string, 'completed' | 'pending' | 'failed'> = {
-    completed: 'completed', pending: 'pending', failed: 'failed', refunded: 'failed',
-  };
-
   return (
     <DashboardLayout>
       {/* Breadcrumb */}
@@ -114,7 +110,7 @@ export function TransactionDetailPage() {
           <div>
             <div className="hp-txn-detail__id-row">
               <h1 className="hp-txn-detail__id">{txn.id}</h1>
-              <StatusBadge status={statusMap[txn.status] || 'pending'} />
+              <StatusBadge status={txn.status} />
               <span className={`hp-dash__type-badge hp-dash__type-badge--${txn.type}`}>{txn.type}</span>
             </div>
             <p className="hp-txn-detail__desc">{txn.description}</p>

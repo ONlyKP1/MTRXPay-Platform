@@ -464,12 +464,12 @@ export function DashboardPage() {
             </thead>
             <tbody>
               {mockTransactions.map((txn) => (
-                <tr key={txn.id}>
+                <tr key={txn.id} className="hp-dash__table-row--clickable" onClick={() => navigate(`/transactions/${txn.id}`)}>
                   <td className="hp-dash__txn-id">{txn.id}</td>
                   <td>{formatDate(txn.date)}</td>
                   <td>{txn.customer}</td>
                   <td>{formatCurrency(txn.amount, txn.currency)}</td>
-                  <td><span className={`hp-dash__status hp-dash__status--${txn.status}`}>{txn.status}</span></td>
+                  <td><StatusBadge status={txn.status} size="sm" /></td>
                 </tr>
               ))}
             </tbody>
