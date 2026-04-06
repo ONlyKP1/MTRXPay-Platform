@@ -14529,7 +14529,8 @@ select.form-input {
 }
 .app-timeline__step {
   display: flex;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 14px;
   min-height: 64px;
 }
 .app-timeline__indicator {
@@ -14589,8 +14590,8 @@ select.form-input {
 .app-timeline__line {
   flex: 1;
   width: 2px;
-  min-height: 24px;
-  margin: 4px 0;
+  min-height: 20px;
+  margin: 3px 0;
 }
 .app-timeline__line--done {
   background: #22c55e;
@@ -14599,12 +14600,14 @@ select.form-input {
   background: rgba(255, 255, 255, 0.08);
 }
 .app-timeline__content {
-  padding: 4px 0 20px;
+  padding: 5px 0 20px;
+  flex: 1;
 }
 .app-timeline__label {
   font-size: 0.85rem;
   font-weight: 600;
   margin: 0 0 2px;
+  line-height: 1;
 }
 .app-timeline__label--done {
   color: #22c55e;
