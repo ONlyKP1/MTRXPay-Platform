@@ -1,4 +1,4 @@
-import { Provider } from '../types/orchestration';
+import type { Provider } from '../types/orchestration';
 
 export function scoreProvider(provider: Provider): number {
   const feeScore = Math.max(0, 100 - provider.baseFee * 20);

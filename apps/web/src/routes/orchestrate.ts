@@ -1,6 +1,7 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { orchestrate } from '../services/orchestrate';
-import { TransactionRequest } from '../types/orchestration';
+import type { TransactionRequest } from '../types/orchestration';
 
 const router = express.Router();
 

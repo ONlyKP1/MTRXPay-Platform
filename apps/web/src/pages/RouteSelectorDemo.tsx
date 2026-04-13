@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RouteSelector } from '../components/RouteSelector';
-import { OrchestrationResponse, TransactionRequest } from '../types/orchestration';
+import type { OrchestrationResponse, TransactionRequest } from '../types/orchestration';
 import '../components/RouteSelector.css';
 
 const defaultRequest: TransactionRequest = {

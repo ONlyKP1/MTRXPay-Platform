@@ -1,4 +1,4 @@
-import { Provider, TransactionRequest } from '../types/orchestration';
+import type { Provider, TransactionRequest } from '../types/orchestration';
 
 export function filterProviders(
   providers: Provider[],

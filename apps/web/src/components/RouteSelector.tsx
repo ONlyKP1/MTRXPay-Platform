@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ProviderOption, OrchestrationResponse } from '../types/orchestration';
+import type { ProviderOption, OrchestrationResponse } from '../types/orchestration';
 
 interface RouteSelectorProps {
   response: OrchestrationResponse;
