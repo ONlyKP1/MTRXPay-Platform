@@ -20,11 +20,7 @@ export function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('loading');
     setErrorMsg('');
-
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1500));
 
     if (form.password.length < 8) {
       setStatus('error');
@@ -37,6 +33,11 @@ export function RegisterPage() {
       setErrorMsg('Passwords do not match.');
       return;
     }
+
+    setStatus('loading');
+
+    // Simulate API call
+    await new Promise((r) => setTimeout(r, 1500));
 
     setStatus('success');
     setTimeout(() => navigate('/login'), 1500);
@@ -58,14 +59,14 @@ export function RegisterPage() {
 
           {status === 'error' && (
             <div className="hp-auth__alert hp-auth__alert--error">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
               {errorMsg}
             </div>
           )}
 
           {status === 'success' && (
             <div className="hp-auth__alert hp-auth__alert--success">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               Account created successfully. Redirecting to login...
             </div>
           )}
@@ -98,6 +99,19 @@ export function RegisterPage() {
                   disabled={status === 'loading' || status === 'success'}
                 />
               </div>
+            </div>
+
+            <div className="hp-auth__field">
+              <label htmlFor="reg-phone">Phone Number</label>
+              <input
+                id="reg-phone"
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="+44 7700 000000"
+                disabled={status === 'loading' || status === 'success'}
+              />
             </div>
 
             <div className="hp-auth__field">

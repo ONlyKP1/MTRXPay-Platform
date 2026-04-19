@@ -15,7 +15,7 @@ export function Footer() {
             <Link to="/register" className="hp-btn hp-btn--primary">
               Sign Up Now
             </Link>
-            <Link to="/register" className="hp-btn hp-btn--outline">
+            <Link to="/contact" className="hp-btn hp-btn--outline">
               Contact Sales
             </Link>
           </div>
@@ -57,7 +57,7 @@ export function Footer() {
             <h4 className="hp-footer__col-title">Company</h4>
             <nav className="hp-footer__col-links">
               <Link to="/about">About Us</Link>
-              <Link to="/register">Careers</Link>
+              <Link to="/contact">Careers</Link>
               <Link to="/contact">Contact</Link>
               <Link to="/faq">FAQ</Link>
             </nav>
@@ -67,10 +67,10 @@ export function Footer() {
           <div className="hp-footer__col">
             <h4 className="hp-footer__col-title">Legal</h4>
             <nav className="hp-footer__col-links">
-              <Link to="/register">Privacy Policy</Link>
-              <Link to="/register">Terms of Service</Link>
-              <Link to="/register">Cookie Policy</Link>
-              <Link to="/register">AML Policy</Link>
+              <Link to="/privacy">Privacy Policy</Link>
+              <Link to="/terms">Terms of Service</Link>
+              <Link to="/cookies">Cookie Policy</Link>
+              <Link to="/aml">AML Policy</Link>
             </nav>
           </div>
         </div>
