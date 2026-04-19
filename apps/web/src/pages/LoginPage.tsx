@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function LoginPage() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -18,7 +19,6 @@ export function LoginPage() {
     // Simulate API call
     await new Promise((r) => setTimeout(r, 1500));
 
-    // Test credentials: test@mtrxpay.com / password123
     if (form.email === 'test@mtrxpay.com' && form.password === 'password123') {
       // Save mock user so dashboard ProtectedRoute allows access
       const mockUser = {
@@ -35,7 +35,7 @@ export function LoginPage() {
       };
       localStorage.setItem('mtrx_user', JSON.stringify(mockUser));
       setStatus('success');
-      setTimeout(() => window.location.href = '/dashboard', 1200);
+      setTimeout(() => navigate('/dashboard'), 1200);
       return;
     }
 
@@ -59,14 +59,14 @@ export function LoginPage() {
 
           {status === 'error' && (
             <div className="hp-auth__alert hp-auth__alert--error">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
               {errorMsg}
             </div>
           )}
 
           {status === 'success' && (
             <div className="hp-auth__alert hp-auth__alert--success">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               Login successful. Redirecting...
             </div>
           )}

@@ -55,6 +55,7 @@ export function Navigation() {
           className={`hp-nav__burger ${isMobileMenuOpen ? 'hp-nav__burger--open' : ''}`}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle navigation menu"
+          aria-expanded={isMobileMenuOpen}
         >
           <span /><span /><span />
         </button>
@@ -73,8 +74,8 @@ export function Navigation() {
             </Link>
           ))}
           <div className="hp-nav__mobile-actions">
-            <button onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }}>Log In</button>
-            <button className="hp-nav__cta" onClick={() => { navigate('/register'); setIsMobileMenuOpen(false); }}>JOIN NOW</button>
+            <button type="button" onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }}>Log In</button>
+            <button type="button" className="hp-nav__cta" onClick={() => { navigate('/register'); setIsMobileMenuOpen(false); }}>JOIN NOW</button>
           </div>
         </div>
       )}

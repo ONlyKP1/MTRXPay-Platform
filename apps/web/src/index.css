@@ -119,8 +119,9 @@ body {
   transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* Smooth theme transitions for key elements */
-* {
+/* Smooth theme transitions for interactive elements only */
+a, button, input, select, textarea,
+.hp-btn, .hp-nav__link, .hp-dash__metric-card, .hp-dash__action-card {
   transition-property: background-color, border-color, color;
   transition-duration: 0.3s;
   transition-timing-function: ease;
@@ -11583,11 +11584,6 @@ select.form-input {
 .hp-auth__logo {
   display: block;
   text-align: center;
-  margin-bottom: 32px;
-}
-.hp-auth__logo {
-  display: block;
-  text-align: center;
   margin: 0 auto 28px;
 }
 .hp-auth__logo img {
@@ -11642,8 +11638,13 @@ select.form-input {
 }
 .hp-auth__row {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 16px;
+}
+@media (max-width: 480px) {
+  .hp-auth__row {
+    flex-direction: column;
+  }
 }
 .hp-auth__field {
   display: flex;

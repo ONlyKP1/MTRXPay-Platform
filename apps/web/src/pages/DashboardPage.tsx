@@ -146,6 +146,7 @@ export function DashboardPage() {
   const [showCompose, setShowCompose] = useState(false);
   const [newMessage, setNewMessage] = useState({ to: 'support', subject: '', body: '' });
   const [dismissedAlerts, setDismissedAlerts] = useState<number[]>([]);
+  const [toastMsg, setToastMsg] = useState('');
   const [dateRange, setDateRange] = useState<DateRange>('7d');
 
   /* ── React Query API calls ── */
@@ -181,7 +182,8 @@ export function DashboardPage() {
   };
 
   const handleSendMessage = () => {
-    alert(`Message sent to ${newMessage.to}!`);
+    setToastMsg(`Message sent to ${newMessage.to}`);
+    setTimeout(() => setToastMsg(''), 3000);
     setNewMessage({ to: 'support', subject: '', body: '' });
     setShowCompose(false);
   };
@@ -239,7 +241,7 @@ export function DashboardPage() {
         </div>
       </section>
 
-      {/* Status Row — Merchant, Onboarding, API Health */}
+      {/* Status Row: Merchant, Onboarding, API Health */}
       <div className="hp-dash__status-row">
         <div className="hp-dash__status-card">
           <span className="hp-dash__status-card-label">Merchant Status</span>
@@ -266,7 +268,7 @@ export function DashboardPage() {
                 <StatusBadge status={onboarding.status as OnboardingStep} />
                 <span className="hp-dash__status-card-meta">
                   Step {onboarding.completedSteps} of {onboarding.totalSteps}
-                  {onboarding.currentStep && ` — ${onboarding.currentStep}`}
+                  {onboarding.currentStep && ` · ${onboarding.currentStep}`}
                 </span>
                 <div className="hp-dash__progress-bar-track" style={{ marginTop: 6 }}>
                   <div
@@ -292,7 +294,7 @@ export function DashboardPage() {
                   {apiLive ? 'Backend connected' : 'Using fallback data'}
                 </span>
                 <span className="hp-dash__status-card-meta">
-                  {apiLive ? 'API online' : 'API offline — showing demo data'}
+                  {apiLive ? 'API online' : 'API offline, showing demo data'}
                 </span>
                 {health.version && (
                   <span className="hp-dash__status-card-meta">v{health.version}</span>
@@ -347,7 +349,7 @@ export function DashboardPage() {
           <span className="hp-dash__metric-value">{formatCurrency(mockEscrowTotal[selectedCurrency])}</span>
           <span className="hp-dash__trend hp-dash__trend--down">{icons.arrowDown} 3%</span>
         </div>
-        <div className="hp-dash__metric-card hp-dash__metric-card--action" onClick={() => navigate('/payouts')}>
+        <div className="hp-dash__metric-card hp-dash__metric-card--action" role="button" tabIndex={0} onClick={() => navigate('/payouts')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/payouts'); }}>
           <div className="hp-dash__metric-icon">{icons.chart}</div>
           <span className="hp-dash__metric-label">Request Payout</span>
           <span className="hp-dash__metric-value">Withdraw</span>
@@ -403,22 +405,22 @@ export function DashboardPage() {
       <section className="hp-dash__actions">
         <span className="hp-dash__section-label">Quick Actions</span>
         <div className="hp-dash__actions-grid">
-          <div className="hp-dash__action-card" onClick={() => navigate('/transactions')}>
+          <div className="hp-dash__action-card" role="button" tabIndex={0} onClick={() => navigate('/transactions')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/transactions'); }}>
             <div className="hp-dash__action-icon">{icons.clipboard}</div>
             <h4 className="hp-dash__action-title">Transaction Data</h4>
             <p className="hp-dash__action-desc">View all transactions, search and export</p>
           </div>
-          <div className="hp-dash__action-card" onClick={() => navigate('/compliance')}>
+          <div className="hp-dash__action-card" role="button" tabIndex={0} onClick={() => navigate('/compliance')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/compliance'); }}>
             <div className="hp-dash__action-icon">{icons.shield}</div>
             <h4 className="hp-dash__action-title">Compliance Centre</h4>
             <p className="hp-dash__action-desc">Manage compliance documents and status</p>
           </div>
-          <div className="hp-dash__action-card" onClick={() => navigate('/payment-types')}>
+          <div className="hp-dash__action-card" role="button" tabIndex={0} onClick={() => navigate('/payment-types')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/payment-types'); }}>
             <div className="hp-dash__action-icon">{icons.creditCard}</div>
             <h4 className="hp-dash__action-title">Payment Types</h4>
             <p className="hp-dash__action-desc">Manage accepted payment methods</p>
           </div>
-          <div className="hp-dash__action-card" onClick={() => navigate('/trust')}>
+          <div className="hp-dash__action-card" role="button" tabIndex={0} onClick={() => navigate('/trust')} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/trust'); }}>
             <div className="hp-dash__action-icon">{icons.star}</div>
             <h4 className="hp-dash__action-title">Trust Score</h4>
             <p className="hp-dash__action-desc">Your current trust score and history</p>
@@ -489,28 +491,28 @@ export function DashboardPage() {
 
       {/* Compose Modal */}
       {showCompose && (
-        <div className="hp-dash__modal-overlay" onClick={() => setShowCompose(false)}>
+        <div className="hp-dash__modal-overlay" onClick={() => setShowCompose(false)} onKeyDown={(e) => { if (e.key === 'Escape') setShowCompose(false); }}>
           <div className="hp-dash__modal" onClick={(e) => e.stopPropagation()}>
             <div className="hp-dash__modal-header">
               <h3>New Message</h3>
-              <button className="hp-dash__modal-close" onClick={() => setShowCompose(false)}>&times;</button>
+              <button className="hp-dash__modal-close" onClick={() => setShowCompose(false)} aria-label="Close">&times;</button>
             </div>
             <div className="hp-dash__modal-body">
               <div className="hp-dash__field">
-                <label>To</label>
-                <select value={newMessage.to} onChange={(e) => setNewMessage({ ...newMessage, to: e.target.value })}>
+                <label htmlFor="compose-to">To</label>
+                <select id="compose-to" value={newMessage.to} onChange={(e) => setNewMessage({ ...newMessage, to: e.target.value })}>
                   <option value="support">MTRX Support</option>
                   <option value="compliance">Compliance Team</option>
                   <option value="finance">Finance Team</option>
                 </select>
               </div>
               <div className="hp-dash__field">
-                <label>Subject</label>
-                <input type="text" value={newMessage.subject} onChange={(e) => setNewMessage({ ...newMessage, subject: e.target.value })} placeholder="Enter subject..." />
+                <label htmlFor="compose-subject">Subject</label>
+                <input id="compose-subject" type="text" value={newMessage.subject} onChange={(e) => setNewMessage({ ...newMessage, subject: e.target.value })} placeholder="Enter subject..." />
               </div>
               <div className="hp-dash__field">
-                <label>Message</label>
-                <textarea value={newMessage.body} onChange={(e) => setNewMessage({ ...newMessage, body: e.target.value })} placeholder="Write your message..." rows={6} />
+                <label htmlFor="compose-body">Message</label>
+                <textarea id="compose-body" value={newMessage.body} onChange={(e) => setNewMessage({ ...newMessage, body: e.target.value })} placeholder="Write your message..." rows={6} />
               </div>
             </div>
             <div className="hp-dash__modal-footer">
@@ -518,6 +520,13 @@ export function DashboardPage() {
               <button className="hp-dash__modal-send" onClick={handleSendMessage}>Send Message</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Toast notification */}
+      {toastMsg && (
+        <div style={{ position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 500, padding: '0.75rem 1.5rem', background: 'var(--gold)', color: '#021B3A', fontSize: '0.85rem', fontWeight: 600, borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }} role="status" aria-live="polite">
+          {toastMsg}
         </div>
       )}
     </DashboardLayout>
