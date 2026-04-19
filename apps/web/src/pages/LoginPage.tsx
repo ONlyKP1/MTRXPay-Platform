@@ -6,6 +6,7 @@ export function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -87,16 +88,27 @@ export function LoginPage() {
             </div>
             <div className="hp-auth__field">
               <label htmlFor="login-password">Password</label>
-              <input
-                id="login-password"
-                name="password"
-                type="password"
-                required
-                value={form.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                disabled={status === 'loading' || status === 'success'}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="login-password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  disabled={status === 'loading' || status === 'success'}
+                  style={{ paddingRight: '3rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
             <div className="hp-auth__forgot">
               <Link to="/forgot-password">Forgot password?</Link>

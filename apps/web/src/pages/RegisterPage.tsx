@@ -12,6 +12,8 @@ export function RegisterPage() {
     confirmPassword: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,30 +132,52 @@ export function RegisterPage() {
 
             <div className="hp-auth__field">
               <label htmlFor="reg-password">Password</label>
-              <input
-                id="reg-password"
-                name="password"
-                type="password"
-                required
-                value={form.password}
-                onChange={handleChange}
-                placeholder="Create a strong password"
-                disabled={status === 'loading' || status === 'success'}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="reg-password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="Create a strong password"
+                  disabled={status === 'loading' || status === 'success'}
+                  style={{ paddingRight: '3rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
 
             <div className="hp-auth__field">
               <label htmlFor="reg-confirm">Confirm Password</label>
-              <input
-                id="reg-confirm"
-                name="confirmPassword"
-                type="password"
-                required
-                value={form.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm your password"
-                disabled={status === 'loading' || status === 'success'}
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="reg-confirm"
+                  name="confirmPassword"
+                  type={showConfirm ? 'text' : 'password'}
+                  required
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your password"
+                  disabled={status === 'loading' || status === 'success'}
+                  style={{ paddingRight: '3rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--gold)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}
+                >
+                  {showConfirm ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
 
             <button
