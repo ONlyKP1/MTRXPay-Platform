@@ -11637,9 +11637,13 @@ select.form-input {
   gap: 16px;
 }
 .hp-auth__row {
-  display: flex;
-  flex-direction: row;
+  display: flex !important;
+  flex-direction: row !important;
   gap: 16px;
+}
+.hp-auth__row > .hp-auth__field {
+  flex: 1;
+  min-width: 0;
 }
 @media (max-width: 480px) {
   .hp-auth__row {
